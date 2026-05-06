@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans, system-ui, sans-serif); background: var(--color-background-tertiary); color: var(--color-text-primary); min-height: 100vh; }
+
+  .app { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 36px; height: 36px; background: #185FA5; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
+  .logo-text { font-size: 16px; font-weight: 500; }
+  .logo-sub { font-size: 12px; color: var(--color-text-secondary); }
+
+  .user-badge { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 20px; font-size: 13px; cursor: pointer; }
+  .avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--color-background-info); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--color-text-info); }
+
+  /* Login */
+  .login-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 2rem; max-width: 380px; margin: 4rem auto; }
+  .login-title { font-size: 18px; font-weight: 500; margin-bottom: 0.5rem; }
+  .login-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1.5rem; }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .field input, .field select { width: 100%; padding: 8px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 14px; outline: none; }
+  .field input:focus, .field select:focus { border-color: #185FA5; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); transition: all 0.15s; }
+  .btn:hover { background: var(--color-background-secondary); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: #185FA5; color: white; border-color: #185FA5; }
+  .btn-primary:hover { background: #0C447C; }
+  .btn-success { background: #0F6E56; color: white; border-color: #0F6E56; }
+  .btn-success:hover { background: #085041; }
+  .btn-danger { background: #993C1D; color: white; border-color: #993C1D; }
+  .btn-danger:hover { background: #712B13; }
+  .btn-full { width: 100%; justify-content: center; }
+  .btn-lg { padding: 12px 20px; font-size: 15px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 4px; }
+  .tab { flex: 1; padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; text-align: center; color: var(--color-text-secondary); border: none; background: transparent; }
+  .tab.active { background: #185FA5; color: white; font-weight: 500; }
+
+  /* Registro */
+  .registro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 600px) { .registro-grid { grid-template-columns: 1fr; } }
+
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; }
+  .card-title { font-size: 14px; font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+
+  /* Cámara */
+  .camera-container { position: relative; border-radius: var(--border-radius-md); overflow: hidden; background: #0a0a0a; aspect-ratio: 4/3; }
+  #videoEl { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #canvasEl { display: none; }
+  #photoPreview { width: 100%; height: 100%; object-fit: cover; display: none; }
+  .camera-overlay { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.55); border-radius: 6px; padding: 4px 8px; font-size: 11px; color: white; display: flex; align-items: center; gap: 4px; }
+  .rec-dot { width: 7px; height: 7px; border-radius: 50%; background: #E24B4A; animation: blink 1s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .camera-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+  /* Info del momento */
+  .momento-info { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; margin-bottom: 1rem; font-size: 13px; }
+  .momento-row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .momento-label { color: var(--color-text-secondary); }
+  .momento-val { font-weight: 500; }
+
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+  .badge-in { background: #EAF3DE; color: #3B6D11; }
+  .badge-out { background: #FAECE7; color: #993C1D; }
+  .badge-pending { background: #F1EFE8; color: #5F5E5A; }
+
+  /* Registros */
+  .registros-list { display: flex; flex-direction: column; gap: 8px; }
+  .registro-item { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 14px; display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 12px; }
+  .reg-photo { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; background: var(--color-background-secondary); }
+  .reg-photo-placeholder { width: 44px; height: 44px; border-radius: 6px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); font-size: 20px; }
+  .reg-nombre { font-size: 14px; font-weight: 500; }
+  .reg-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .reg-hora { font-size: 18px; font-weight: 500; text-align: right; }
+  .reg-fecha { font-size: 11px; color: var(--color-text-secondary); text-align: right; }
+
+  /* Stats admin */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2,1fr); } }
+  .stat-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; }
+  .stat-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .stat-val { font-size: 22px; font-weight: 500; }
+
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .filter-row input, .filter-row select { padding: 7px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 13px; outline: none; }
+
+  /* Modal foto */
+  .photo-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; }
+  .photo-modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); padding: 1.25rem; max-width: 400px; width: 90%; }
+  .photo-modal img { width: 100%; border-radius: var(--border-radius-md); margin-bottom: 1rem; }
+  .photo-modal-meta { font-size: 13px; color: var(--color-text-secondary); }
+  .photo-modal-meta p { margin-bottom: 4px; }
+
+  .success-msg { background: #EAF3DE; color: #3B6D11; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 13px; margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+  .error-msg { background: #FCEBEB; color: #A32D2D; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 13px; margin-top: 10px; }
+
+  .separator { height: 0.5px; background: var(--color-border-tertiary); margin: 1rem 0; }
+  .empty-state { text-align: center; padding: 2rem; color: var(--color-text-secondary); font-size: 14px; }
+  .empty-icon { font-size: 32px; margin-bottom: 0.5rem; }
+
+  .tag-verified { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; background: #EAF3DE; color: #3B6D11; padding: 2px 7px; border-radius: 10px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon"><i class="ti ti-building-office" aria-hidden="true"></i></div>
+    <div>
+      <div class="logo-text">CheckIn Pro</div>
+      <div class="logo-sub">Sistema de asistencia verificado</div>
+    </div>
+  </div>
+  <div id="userBadge" style="display:none;" onclick="logout()" class="user-badge">
+    <div class="avatar" id="avatarEl">--</div>
+    <span id="userNameBadge">-</span>
+    <i class="ti ti-logout" style="font-size:14px; color:var(--color-text-secondary)" aria-hidden="true"></i>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div style="text-align:center; margin-bottom:1.5rem;">
+      <div style="width:52px;height:52px;background:#E6F1FB;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:#185FA5;"><i class="ti ti-fingerprint" aria-hidden="true"></i></div>
+      <div class="login-title">Iniciar sesión</div>
+      <div class="login-sub">Sistema de control de asistencia</div>
+    </div>
+    <div class="field">
+      <label>Usuario</label>
+      <select id="loginUser">
+        <option value="">— Selecciona tu usuario —</option>
+        <option value="ana">Ana García (Empleada)</option>
+        <option value="carlos">Carlos López (Empleado)</option>
+        <option value="maria">María Torres (Empleada)</option>
+        <option value="admin">Admin — Jefe</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <div id="loginError" class="error-msg" style="display:none; margin-bottom:10px;"></div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()"><i class="ti ti-login" aria-hidden="true"></i> Entrar</button>
+    <div style="margin-top:12px; font-size:11px; color:var(--color-text-secondary); text-align:center;">Demo: usa cualquier contraseña</div>
+  </div>
+</div>
+
+<!-- EMPLEADO -->
+<div id="empleadoScreen" style="display:none;">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('registrar')"><i class="ti ti-camera" aria-hidden="true"></i> Registrar</button>
+    <button class="tab" onclick="switchTab('historial')"><i class="ti ti-history" aria-hidden="true"></i> Mi historial</button>
+  </div>
+
+  <div id="tabRegistrar">
+    <div class="registro-grid">
+      <!-- Cámara -->
+      <div class="card">
+        <div class="card-title"><i class="ti ti-camera" aria-hidden="true"></i> Verificación con foto</div>
+        <div class="camera-container">
+          <video id="videoEl" autoplay playsinline></video>
+          <canvas id="canvasEl"></canvas>
+          <img id="photoPreview" alt="Foto tomada">
+          <div class="camera-overlay"><div class="rec-dot"></div> EN VIVO</div>
+        </div>
+        <div class="camera-actions">
+          <button class="btn btn-primary" style="flex:1" onclick="tomarFoto()"><i class="ti ti-camera" aria-hidden="true"></i> Tomar foto</button>
+          <button class="btn" onclick="retomar()" id="retakeBtn" style="display:none"><i class="ti ti-refresh" aria-hidden="true"></i> Retomar</button>
+        </div>
+        <div id="camError" class="error-msg" style="display:none; margin-top:10px;"></div>
+      </div>
+
+      <!-- Info y acciones -->
+      <div>
+        <div class="card" style="margin-bottom:1rem;">
+          <div class="card-title"><i class="ti ti-clock" aria-hidden="true"></i> Momento del registro</div>
+          <div class="momento-info">
+            <div class="momento-row"><span class="momento-label">Fecha</span><span class="momento-val" id="momentoFecha">-</span></div>
+            <div class="momento-row"><span class="momento-label">Hora</span><span class="momento-val" id="momentoHora">-</span></div>
+            <div class="momento-row"><span class="momento-label">Dispositivo</span><span class="momento-val" id="momentoDevice">-</span></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:4px;">Estado anterior</div>
+            <div id="estadoActual" class="status-badge badge-pending"><i class="ti ti-minus" aria-hidden="true"></i> Sin registros hoy</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="ti ti-report" aria-hidden="true"></i> Reportar</div>
+          <button class="btn btn-success btn-full btn-lg" style="margin-bottom:10px" onclick="reportar('entrada')">
+            <i class="ti ti-door-enter" aria-hidden="true"></i> Reportar llegada
+          </button>
+          <button class="btn btn-danger btn-full btn-lg" onclick="reportar('salida')">
+            <i class="ti ti-door-exit" aria-hidden="true"></i> Reportar salida
+          </button>
+          <div id="reportMsg" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tabHistorial" style="display:none;">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-history" aria-hidden="true"></i> Mi historial de asistencia</div>
+      <div id="historialList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminScreen" style="display:none;">
+  <div class="stats-row" id="statsRow"></div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:10px;">
+      <div class="card-title" style="margin:0"><i class="ti ti-table" aria-hidden="true"></i> Todos los registros</div>
+      <button class="btn" onclick="exportCSV()"><i class="ti ti-download" aria-hidden="true"></i> Exportar CSV</button>
+    </div>
+    <div class="filter-row">
+      <input type="text" id="filtroNombre" placeholder="Buscar empleado..." oninput="renderAdmin()">
+      <select id="filtroTipo" onchange="renderAdmin()">
+        <option value="">Todos los tipos</option>
+        <option value="entrada">Llegadas</option>
+        <option value="salida">Salidas</option>
+      </select>
+      <input type="date" id="filtroFecha" onchange="renderAdmin()">
+    </div>
+    <div id="adminList"></div>
+  </div>
+</div>
+
+<!-- Modal foto -->
+<div id="photoModal" class="photo-modal-bg" style="display:none;" onclick="cerrarModal(event)">
+  <div class="photo-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span style="font-weight:500;font-size:15px;">Detalle del registro</span>
+      <button class="btn" onclick="document.getElementById('photoModal').style.display='none'" style="padding:4px 8px"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <img id="modalPhoto" src="" alt="Foto del registro">
+    <div class="photo-modal-meta" id="modalMeta"></div>
+  </div>
+</div>
+
+<script>
+const USERS = {
+  ana:    { nombre: 'Ana García',    rol: 'empleado', initials: 'AG' },
+  carlos: { nombre: 'Carlos López',  rol: 'empleado', initials: 'CL' },
+  maria:  { nombre: 'María Torres',  rol: 'empleado', initials: 'MT' },
+  admin:  { nombre: 'Admin — Jefe',  rol: 'admin',    initials: 'AD' }
+};
+
+let currentUser = null;
+let stream = null;
+let fotoCaptured = null;
+let registros = JSON.parse(localStorage.getItem('checkin_registros') || '[]');
+let activeTab = 'registrar';
+
+function saveRegistros() {
+  localStorage.setItem('checkin_registros', JSON.stringify(registros));
+}
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  if (!u) { err.textContent = 'Selecciona un usuario.'; err.style.display='block'; return; }
+  if (!p) { err.textContent = 'Ingresa tu contraseña.'; err.style.display='block'; return; }
+  err.style.display = 'none';
+  currentUser = u;
+  const ud = USERS[u];
+  document.getElementById('userNameBadge').textContent = ud.nombre;
+  document.getElementById('avatarEl').textContent = ud.initials;
+  document.getElementById('userBadge').style.display = 'flex';
+  document.getElementById('loginScreen').style.display = 'none';
+  if (ud.rol === 'admin') {
+    document.getElementById('adminScreen').style.display = 'block';
+    renderAdmin();
+  } else {
+    document.getElementById('empleadoScreen').style.display = 'block';
+    iniciarCamara();
+    actualizarReloj();
+    setInterval(actualizarReloj, 1000);
+    renderHistorial();
+    actualizarEstado();
+  }
+}
+
+function logout() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  currentUser = null; fotoCaptured = null;
+  document.getElementById('loginScreen').style.display = 'block';
+  document.getElementById('empleadoScreen').style.display = 'none';
+  document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('userBadge').style.display = 'none';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('photoPreview').style.display = 'none';
+  document.getElementById('videoEl').style.display = 'block';
+  document.getElementById('retakeBtn').style.display = 'none';
+  document.getElementById('reportMsg').style.display = 'none';
+}
+
+function actualizarReloj() {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('momentoFecha').textContent = now.toLocaleDateString('es-CO', opts);
+  document.getElementById('momentoHora').textContent = now.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  const ua = navigator.userAgent;
+  let dev = 'Computador';
+  if (/mobile/i.test(ua)) dev = 'Móvil';
+  else if (/tablet/i.test(ua)) dev = 'Tablet';
+  document.getElementById('momentoDevice').textContent = dev;
+}
+
+function actualizarEstado() {
+  const hoy = new Date().toDateString();
+  const misHoy = registros.filter(r => r.usuario === currentUser && new Date(r.timestamp).toDateString() === hoy);
+  const el = document.getElementById('estadoActual');
+  if (misHoy.length === 0) {
+    el.className = 'status-badge badge-pending'; el.innerHTML = '<i class="ti ti-minus"></i> Sin registros hoy';
+  } else {
+    const ultimo = misHoy[misHoy.length-1];
+    if (ultimo.tipo === 'entrada') {
+      el.className = 'status-badge badge-in'; el.innerHTML = '<i class="ti ti-check"></i> Llegada registrada';
+    } else {
+      el.className = 'status-badge badge-out'; el.innerHTML = '<i class="ti ti-door-exit"></i> Salida registrada';
+    }
+  }
+}
+
+async function iniciarCamara() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+    document.getElementById('videoEl').srcObject = stream;
+    document.getElementById('camError').style.display = 'none';
+  } catch(e) {
+    document.getElementById('camError').textContent = 'No se pudo acceder a la cámara. Por favor permite el acceso.';
+    document.getElementById('camError').style.display = 'block';
+  }
+}
+
+function tomarFoto() {
+  const video = document.getElementById('videoEl');
+  const canvas = document.getElementById('canvasEl');
+  if (!stream) { iniciarCamara(); return; }
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  fotoCaptured = canvas.toDataURL('image/jpeg', 0.7);
+  const prev = document.getElementById('photoPreview');
+  prev.src = fotoCaptured;
+  prev.style.display = 'block';
+  video.style.display = 'none';
+  document.getElementById('retakeBtn').style.display = 'inline-flex';
+}
+
+function retomar() {
+  fotoCaptured = null;
+  document.getElementById('photoPreview').style.display = 'none';
+  document.getElementById('videoEl').style.display = 'block';
+  document.getElementById('retakeBtn').style.display = 'none';
+}
+
+function reportar(tipo) {
+  const msgEl = document.getElementById('reportMsg');
+  if (!fotoCaptured) {
+    msgEl.innerHTML = '<div class="error-msg"><i class="ti ti-alert-circle"></i> Primero debes tomar una foto para verificar tu identidad.</div>';
+    msgEl.style.display = 'block';
+    return;
+  }
+  const now = new Date();
+  const reg = {
+    id: Date.now(),
+    usuario: currentUser,
+    nombre: USERS[currentUser].nombre,
+    tipo,
+    timestamp: now.toISOString(),
+    foto: fotoCaptured,
+    device: /mobile/i.test(navigator.userAgent) ? 'Móvil' : 'Computador',
+    verificado: true
+  };
+  registros.unshift(reg);
+  saveRegistros();
+  const hora = now.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'});
+  const emoji = tipo === 'entrada' ? 'ti-door-enter' : 'ti-door-exit';
+  const verb = tipo === 'entrada' ? 'Llegada' : 'Salida';
+  msgEl.innerHTML = `<div class="success-msg"><i class="ti ${emoji}"></i> ${verb} registrada a las ${hora} — foto verificada <span class="tag-verified"><i class="ti ti-shield-check"></i> Verificado</span></div>`;
+  msgEl.style.display = 'block';
+  retomar();
+  actualizarEstado();
+  renderHistorial();
+  if (USERS[currentUser].rol === 'admin') renderAdmin();
+  setTimeout(() => { msgEl.style.display = 'none'; }, 5000);
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0 && tab==='registrar') || (i===1 && tab==='historial')));
+  document.getElementById('tabRegistrar').style.display = tab === 'registrar' ? 'block' : 'none';
+  document.getElementById('tabHistorial').style.display = tab === 'historial' ? 'block' : 'none';
+  if (tab === 'historial') renderHistorial();
+}
+
+function renderHistorial() {
+  const list = document.getElementById('historialList');
+  const misReg = registros.filter(r => r.usuario === currentUser);
+  if (misReg.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="ti ti-clipboard-off" style="font-size:32px"></i></div>Sin registros aún</div>';
+    return;
+  }
+  list.innerHTML = '<div class="registros-list">' + misReg.map(r => renderItem(r, false)).join('') + '</div>';
+}
+
+function renderAdmin() {
+  const fn = (document.getElementById('filtroNombre')||{}).value?.toLowerCase() || '';
+  const ft = (document.getElementById('filtroTipo')||{}).value || '';
+  const ff = (document.getElementById('filtroFecha')||{}).value || '';
+  let filtered = registros.filter(r => {
+    if (fn && !r.nombre.toLowerCase().includes(fn)) return false;
+    if (ft && r.tipo !== ft) return false;
+    if (ff) {
+      const d = new Date(r.timestamp);
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      if (ds !== ff) return false;
+    }
+    return true;
+  });
+  const total = registros.length;
+  const hoy = new Date().toDateString();
+  const hoyReg = registros.filter(r => new Date(r.timestamp).toDateString() === hoy);
+  const empleados = [...new Set(registros.map(r => r.usuario))].length;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total registros</div><div class="stat-val">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Hoy</div><div class="stat-val">${hoyReg.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Empleados activos</div><div class="stat-val">${empleados}</div></div>
+    <div class="stat-card"><div class="stat-label">Llegadas hoy</div><div class="stat-val">${hoyReg.filter(r=>r.tipo==='entrada').length}</div></div>
+  `;
+  const listEl = document.getElementById('adminList');
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="ti ti-search-off" style="font-size:32px"></i></div>Sin resultados</div>';
+    return;
+  }
+  listEl.innerHTML = '<div class="registros-list">' + filtered.map(r => renderItem(r, true)).join('') + '</div>';
+}
+
+function renderItem(r, showUser) {
+  const d = new Date(r.timestamp);
+  const hora = d.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'});
+  const fecha = d.toLocaleDateString('es-CO', {day:'2-digit', month:'short', year:'numeric'});
+  const badgeClass = r.tipo === 'entrada' ? 'badge-in' : 'badge-out';
+  const badgeText = r.tipo === 'entrada' ? '<i class="ti ti-door-enter"></i> Llegada' : '<i class="ti ti-door-exit"></i> Salida';
+  const photoEl = r.foto
+    ? `<img class="reg-photo" src="${r.foto}" alt="Foto" style="cursor:pointer" onclick='verFoto(${r.id})'>`
+    : `<div class="reg-photo-placeholder"><i class="ti ti-user" style="font-size:20px"></i></div>`;
+  return `<div class="registro-item">
+    ${photoEl}
+    <div>
+      <div class="reg-nombre">${showUser ? r.nombre : 'Tú'}</div>
+      <div class="reg-sub" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span class="status-badge ${badgeClass}" style="font-size:11px;padding:2px 8px">${badgeText}</span>
+        ${r.verificado ? '<span class="tag-verified"><i class="ti ti-shield-check"></i> Foto verificada</span>' : ''}
+      </div>
+    </div>
+    <div></div>
+    <div><div class="reg-hora">${hora}</div><div class="reg-fecha">${fecha}</div></div>
+  </div>`;
+}
+
+function verFoto(id) {
+  const r = registros.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById('modalPhoto').src = r.foto;
+  const d = new Date(r.timestamp);
+  document.getElementById('modalMeta').innerHTML = `
+    <p><strong>Empleado:</strong> ${r.nombre}</p>
+    <p><strong>Tipo:</strong> ${r.tipo === 'entrada' ? 'Llegada' : 'Salida'}</p>
+    <p><strong>Fecha:</strong> ${d.toLocaleDateString('es-CO', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}</p>
+    <p><strong>Hora exacta:</strong> ${d.toLocaleTimeString('es-CO')}</p>
+    <p><strong>Dispositivo:</strong> ${r.device}</p>
+    <p style="margin-top:8px"><span class="tag-verified"><i class="ti ti-shield-check"></i> Registro verificado con foto en tiempo real</span></p>
+  `;
+  document.getElementById('photoModal').style.display = 'flex';
+}
+
+function cerrarModal(e) {
+  if (e.target.id === 'photoModal') document.getElementById('photoModal').style.display = 'none';
+}
+
+function exportCSV() {
+  const headers = ['Empleado','Tipo','Fecha','Hora','Dispositivo','Verificado'];
+  const rows = registros.map(r => {
+    const d = new Date(r.timestamp);
+    return [r.nombre, r.tipo, d.toLocaleDateString('es-CO'), d.toLocaleTimeString('es-CO'), r.device, r.verificado ? 'Sí' : 'No'];
+  });
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'asistencia_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
