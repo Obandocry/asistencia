@@ -3,53 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Paz - Cloud Technology Pro (Fotos Ampliadas)</title>
+    <title>Misión Paz - Control Pro</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-    
     <style>
-        :root { --primary: #185FA5; --secondary: #0F4C81; --accent: #D4AF37; --bg: #f0f4f8; --white: #ffffff; }
+        :root { --primary: #185FA5; --secondary: #0F4C81; --accent: #D4AF37; --bg: #f0f4f8; --white: #ffffff; --danger: #c53030; --success: #2f855a; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; }
         .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
         .main-header { background: var(--white); padding: 20px; text-align: center; border-bottom: 4px solid var(--primary); border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .logo-church { width: 65px; margin-bottom: 10px; }
-        .verse-box { margin: 15px; padding: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 15px; box-shadow: 0 6px 15px rgba(24, 95, 165, 0.3); }
         .card { background: var(--white); margin: 0 15px 15px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
-        .btn-main:active { transform: scale(0.98); }
         .form-select, .form-input { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; margin-bottom: 15px; background: #f8fafc; font-size: 15px; }
-        .video-box { width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 15px; margin-bottom: 15px; overflow: hidden; border: 3px solid #e2e8f0; }
-        
-        /* --- AJUSTE DE FOTOS MÁS GRANDES EN REPORTES --- */
-        .log-card { 
-            display: flex; 
-            flex-direction: column; /* Cambiamos a columna para dar más espacio a la foto */
-            padding: 20px 15px; 
-            border-bottom: 3px solid #eee; /* Borde más grueso para separar reportes */
-            background: #fff;
-            margin-bottom: 10px;
-            border-radius: 12px;
-        }
-        
-        .log-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .log-avatar { 
-            width: 100%; /* La foto ocupa todo el ancho de la tarjeta */
-            height: auto; /* Mantiene la proporción de la foto */
-            aspect-ratio: 4/3; /* Proporción estándar */
-            border-radius: 12px; 
-            object-fit: cover; 
-            border: 3px solid var(--primary); 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        /* ----------------------------------------------- */
+        .log-card { display: flex; flex-direction: column; padding: 20px 15px; background: #fff; margin-bottom: 12px; border-radius: 12px; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .log-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .log-avatar { width: 100%; height: auto; aspect-ratio: 4/3; border-radius: 12px; object-fit: cover; border: 2px solid #eee; }
+        .filter-box { background: var(--secondary); padding: 15px; margin: 0 15px 15px; border-radius: 15px; color: white; }
+        .badge-status { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
@@ -57,19 +29,13 @@
 <div class="app-container">
     <header class="main-header">
         <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" class="logo-church">
-        <h1 style="font-size:1.3rem; color:var(--primary); margin:0;">MISIÓN PAZ</h1>
-        <p style="color: #666; font-size: 10px; font-weight: 600;">TECNOLOGÍA EMPRESARIAL</p>
+        <h1 style="font-size:1.3rem; color:var(--primary); margin:0;">SISTEMA ASISTENCIA</h1>
     </header>
 
-    <div class="verse-box">
-        <p id="vText" style="font-style: italic; font-size: 14px; line-height: 1.4; margin-bottom: 5px;">"Todo lo puedo en Cristo que me fortalece."</p>
-        <small id="vRef" style="color: var(--accent); font-weight: bold;">Filipenses 4:13</small>
-    </div>
-
-    <div id="screenLogin" class="card">
-        <label class="label-custom">Área Organizacional</label>
+    <div id="screenLogin" class="card" style="margin-top:20px;">
+        <label class="label-custom">Seleccione su Área</label>
         <select id="selArea" class="form-select" onchange="filtrarUsuarios()">
-            <option value="">-- Seleccione Área --</option>
+            <option value="">-- Áreas --</option>
             <option value="PRESIDENCIA">PRESIDENCIA</option>
             <option value="GERENCIA CORPORATIVA">GERENCIA CORPORATIVA</option>
             <option value="FINANCIERA">FINANCIERA</option>
@@ -85,38 +51,40 @@
             <option value="MEDIA Y PRODUCCION">MEDIA Y PRODUCCION</option>
             <option value="TECNOLOGIA">TECNOLOGÍA</option>
         </select>
-
-        <label class="label-custom">Nombre del Servidor</label>
-        <select id="selUser" class="form-select">
-            <option value="">Primero elija área...</option>
-        </select>
-
-        <label class="label-custom">Contraseña</label>
-        <input type="password" id="inputPass" class="form-input" placeholder="••••">
-        <button class="btn-main" onclick="intentarEntrar()"><i class="ti ti-login"></i> ENTRAR</button>
+        <select id="selUser" class="form-select"><option value="">Primero elija área...</option></select>
+        <input type="password" id="inputPass" class="form-input" placeholder="Contraseña">
+        <button class="btn-main" onclick="intentarEntrar()">INGRESAR</button>
     </div>
 
     <div id="screenCapture" style="display:none;" class="card">
-        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px; font-size:1.1rem;"></h3>
-        <div class="video-box">
+        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px; font-size: 1.1rem;"></h3>
+        <div style="width:100%; aspect-ratio:4/3; background:#000; border-radius:15px; overflow:hidden; margin-bottom:15px; border: 3px solid #e2e8f0;">
             <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
             <canvas id="canvas" style="display:none;"></canvas>
             <img id="preview" style="display:none; width:100%; height:100%; object-fit:cover;">
         </div>
-        <button class="btn-main" style="background: #64748b; margin-bottom: 10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> CAPTURAR FOTO</button>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button class="btn-main" style="background:#2f855a;" onclick="saveRecord('Entrada')">LLEGADA</button>
-            <button class="btn-main" style="background:#c53030;" onclick="saveRecord('Salida')">SALIDA</button>
+        <button class="btn-main" style="background:#64748b; margin-bottom:10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> CAPTURAR FOTO</button>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <button class="btn-main" style="background:var(--success);" onclick="saveRecord('Entrada')">LLEGADA</button>
+            <button class="btn-main" style="background:var(--danger);" onclick="saveRecord('Salida')">SALIDA</button>
         </div>
     </div>
 
-    <div id="screenAdmin" style="display:none; background:transparent; margin:0; padding:0 15px;" class="admin-panel">
-        <div class="card" style="margin:15px 0; padding: 20px;">
-            <h2 id="adminTitle" style="font-size:1.1rem; color:var(--primary); margin-bottom:15px;">Control de Asistencia</h2>
-            <button class="btn-main" style="background: #107c41;" onclick="exportToExcel()"><i class="ti ti-file-spreadsheet"></i> DESCARGAR EXCEL DE DATOS</button>
+    <div id="screenAdmin" style="display:none;">
+        <div class="filter-box">
+            <label class="label-custom" style="color:white;">Control por Día:</label>
+            <input type="date" id="filterDate" class="form-input" style="margin-bottom:0;" onchange="aplicarFiltroFecha()">
         </div>
-        <div id="logsContainer"></div>
-        <button class="btn-main" style="background:#fff; color:#666; margin: 20px 0; border: 2px solid #ddd;" onclick="location.reload()">CERRAR SESIÓN DE JEFE</button>
+        
+        <div class="card" style="padding:15px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <button class="btn-main" style="background:var(--success); font-size:11px;" onclick="exportarExcelDia()">EXCEL DÍA</button>
+                <button class="btn-main" style="background:var(--secondary); font-size:11px;" onclick="exportarExcelTodo()">REPORTE TOTAL</button>
+            </div>
+        </div>
+
+        <div id="logsContainer" style="padding: 0 15px;"></div>
+        <button class="btn-main" style="background:#fff; color:#666; margin:20px 15px; border:1px solid #ddd;" onclick="location.reload()">CERRAR SESIÓN</button>
     </div>
 </div>
 
@@ -136,9 +104,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let listaUsuarios = [];
-    let logsActuales = [];
+    let logsGlobales = [];
+    let areaJefe = "";
 
-    // Cargar usuarios desde la colección "usuarios" de Firebase
     async function cargarBD() {
         const snap = await getDocs(collection(db, "usuarios"));
         listaUsuarios = [];
@@ -150,57 +118,43 @@
         const area = document.getElementById('selArea').value;
         const sel = document.getElementById('selUser');
         sel.innerHTML = '<option value="">-- Seleccione su Nombre --</option>';
-        const filtrados = listaUsuarios.filter(u => u.area === area);
-        filtrados.forEach(u => sel.innerHTML += `<option value="${u.id}">${u.nombre}</option>`);
+        listaUsuarios.filter(u => u.area === area).forEach(u => sel.innerHTML += `<option value="${u.id}">${u.nombre}</option>`);
     };
 
     window.intentarEntrar = () => {
         const id = document.getElementById('selUser').value;
         const pass = document.getElementById('inputPass').value;
         const user = listaUsuarios.find(u => u.id === id);
-
         if(user && user.clave === pass) {
             document.getElementById('screenLogin').style.display = 'none';
             if(user.rol === "JEFE") {
+                areaJefe = user.area;
                 document.getElementById('screenAdmin').style.display = 'block';
-                document.getElementById('adminTitle').innerText = `Reporte de ${user.area}`;
-                cargarReportes(user.area);
+                document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+                escucharReportes();
             } else {
                 document.getElementById('screenCapture').style.display = 'block';
-                document.getElementById('welcomeUser').innerText = `Bendiciones, ${user.nombre}`;
+                document.getElementById('welcomeUser').innerText = `Bienvenido, ${user.nombre}`;
                 window.currentUser = user;
                 startCam();
             }
-        } else { alert("Datos incorrectos. Intente de nuevo."); }
+        } else { alert("Acceso denegado"); }
     };
 
     function startCam() {
         navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('webcam').srcObject = s);
     }
 
-    // Captura con Estampado de Seguridad y Calidad Media (para n itidez y espacio)
     window.doPhoto = () => {
         const v = document.getElementById('webcam');
         const c = document.getElementById('canvas');
         const ctx = c.getContext('2d');
-        
-        c.width = 640; 
-        c.height = 480;
+        c.width = 640; c.height = 480;
         ctx.drawImage(v, 0, 0, 640, 480);
-        
         const ahora = new Date();
         const marca = `${ahora.toLocaleDateString()} | ${ahora.toLocaleTimeString()}`;
-
-        // Franja de seguridad inferior
-        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-        ctx.fillRect(0, 430, 640, 50);
-
-        // Texto Estampado (Dorado Misión Paz)
-        ctx.fillStyle = "#D4AF37";
-        ctx.font = "bold 24px Arial"; // Texto un poco más grande para mejor lectura
-        ctx.fillText(marca, 25, 465);
-        
-        // Calidad 0.8 (buena nitidez, peso controlado)
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)"; ctx.fillRect(0, 430, 640, 50);
+        ctx.fillStyle = "#D4AF37"; ctx.font = "bold 24px Arial"; ctx.fillText(marca, 25, 465);
         window.currentPhoto = c.toDataURL('image/jpeg', 0.8);
         document.getElementById('preview').src = window.currentPhoto;
         document.getElementById('preview').style.display = 'block';
@@ -208,65 +162,89 @@
     };
 
     window.saveRecord = async (tipo) => {
-        if(!window.currentPhoto) return alert("Por favor, capture su foto de asistencia.");
+        if(!window.currentPhoto) return alert("Captura la foto primero");
         navigator.geolocation.getCurrentPosition(async (pos) => {
+            const hoy = new Date();
             await addDoc(collection(db, "asistencias"), {
                 usuario: window.currentUser.nombre,
                 area: window.currentUser.area,
                 tipo: tipo,
-                fecha: new Date().toISOString(),
+                fecha: hoy.toISOString(),
+                fechaCorta: hoy.toISOString().split('T')[0],
                 foto: window.currentPhoto,
                 gps: `${pos.coords.latitude},${pos.coords.longitude}`
             });
-            alert("¡Registro guardado con éxito! Que tenga un bendecido día.");
+            alert("¡Registro exitoso!");
             location.reload();
-        }, () => alert("Por favor activa el GPS"));
+        }, () => alert("GPS Obligatorio"));
     };
 
-    // --- FUNCIÓN MODIFICADA PARA MOSTRAR FOTOS GRANDES ---
-    function cargarReportes(area) {
-        const q = query(collection(db, "asistencias"), where("area", "==", area));
+    function escucharReportes() {
+        const q = query(collection(db, "asistencias"), where("area", "==", areaJefe));
         onSnapshot(q, (snap) => {
-            const container = document.getElementById('logsContainer');
-            container.innerHTML = "";
-            logsActuales = [];
-            snap.forEach(doc => {
-                const d = doc.data();
-                logsActuales.push(d);
-                
-                // Diseño de tarjeta optimizado para foto grande
-                container.innerHTML += `
-                    <div class="log-card">
-                        <div class="log-header">
-                            <div style="font-size:12px; color:#555;">
-                                <strong style="font-size:15px; color:var(--primary);">${d.usuario}</strong><br>
-                                ${new Date(d.fecha).toLocaleString()}<br>
-                                Área: ${d.area}
-                            </div>
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <span style="background:${d.tipo=='Entrada'?'#2f855a':'#c53030'}; color:white; padding:5px 10px; border-radius:15px; font-weight:bold; font-size:11px;">
-                                    ${d.tipo.toUpperCase()}
-                                </span>
-                                <a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="color:var(--primary); background:#eee; padding:8px; border-radius:50%;">
-                                    <i class="ti ti-map-pin" style="font-size:22px;"></i>
-                                
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <img src="${d.foto}" class="log-avatar">
-                    </div>`;
-            });
+            logsGlobales = [];
+            snap.forEach(doc => logsGlobales.push(doc.data()));
+            aplicarFiltroFecha();
         });
     }
 
-    window.exportToExcel = () => {
-        if(logsActuales.length === 0) return alert("No hay datos para exportar.");
-        const ws = XLSX.utils.json_to_sheet(logsActuales.map(l => ({Nombre: l.usuario, Area: l.area, Tipo: l.tipo, Fecha: new Date(l.fecha).toLocaleString(), GPS: l.gps})));
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Asistencias");
-        XLSX.writeFile(wb, "Reporte_Asistencia_MisionPaz.xlsx");
+    window.aplicarFiltroFecha = () => {
+        const f = document.getElementById('filterDate').value;
+        const container = document.getElementById('logsContainer');
+        container.innerHTML = "";
+        const filtrados = logsGlobales.filter(l => l.fechaCorta === f).sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+        
+        if(filtrados.length === 0) { container.innerHTML = "<p style='text-align:center;'>Sin datos.</p>"; return; }
+
+        filtrados.forEach(async (d) => {
+            const horaActual = new Date(d.fecha);
+            // Lógica: Si es Entrada y pasa de las 8:00:00 AM es Retardo
+            const esRetardo = d.tipo === 'Entrada' && (horaActual.getHours() > 8 || (horaActual.getHours() === 8 && horaActual.getMinutes() > 0));
+            const cardId = `c${Math.random().toString(36).substr(2,5)}`;
+
+            container.innerHTML += `
+                <div class="log-card" style="border-left: 6px solid ${esRetardo ? 'var(--danger)' : 'var(--success)'}">
+                    <div class="log-header">
+                        <div>
+                            <strong style="color:var(--primary); font-size:14px;">${d.usuario}</strong><br>
+                            <small style="font-weight:700;">${horaActual.toLocaleTimeString()}</small>
+                            ${esRetardo ? '<br><span style="color:var(--danger); font-size:9px; font-weight:900;">⚠️ RETARDO</span>' : ''}
+                        </div>
+                        <div style="text-align:right;">
+                            <span class="badge-status" style="background:${d.tipo=='Entrada'?'var(--success)':'var(--danger)'}">${d.tipo.toUpperCase()}</span>
+                            <br><small id="addr-${cardId}" style="font-size:9px; color:#777;">Buscando dirección...</small>
+                        </div>
+                    </div>
+                    <img src="${d.foto}" class="log-avatar">
+                </div>`;
+
+            // Geocodificación Gratuita (Nominatim)
+            try {
+                const [lat, lon] = d.gps.split(',');
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                const data = await res.json();
+                const texto = data.address.road || data.address.suburb || "Cali, Valle";
+                document.getElementById(`addr-${cardId}`).innerText = texto;
+            } catch (e) { document.getElementById(`addr-${cardId}`).innerText = "Ubicación detectada"; }
+        });
     };
+
+    function generarExcel(lista, nombre) {
+        const ws = XLSX.utils.json_to_sheet(lista.map(l => ({
+            Nombre: l.usuario,
+            Tipo: l.tipo,
+            Fecha: new Date(l.fecha).toLocaleDateString(),
+            Hora: new Date(l.fecha).toLocaleTimeString(),
+            Estado: (l.tipo === 'Entrada' && (new Date(l.fecha).getHours() > 8 || (new Date(l.fecha).getHours() === 8 && new Date(l.fecha).getMinutes() > 0))) ? 'RETARDO' : 'A TIEMPO',
+            Mapa: `https://www.google.com/maps?q=${l.gps}`
+        })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Hoja1");
+        XLSX.writeFile(wb, `${nombre}.xlsx`);
+    }
+
+    window.exportarExcelDia = () => generarExcel(logsGlobales.filter(l => l.fechaCorta === document.getElementById('filterDate').value), "Reporte_Dia");
+    window.exportarExcelTodo = () => generarExcel(logsGlobales.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)), "Reporte_Completo");
 </script>
 </body>
 </html>
