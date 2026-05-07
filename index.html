@@ -3,53 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Paz - Gestión de Personal</title>
+    <title>Misión Paz - Cloud Technology Pro</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    
     <style>
-        :root { 
-            --primary: #185FA5; 
-            --secondary: #0F4C81; 
-            --accent: #D4AF37; 
-            --bg: #f0f4f8; 
-            --white: #ffffff; 
-        }
-        
+        :root { --primary: #185FA5; --secondary: #0F4C81; --accent: #D4AF37; --bg: #f0f4f8; --white: #ffffff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; }
         .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        .main-header { 
-            background: var(--white); padding: 20px; text-align: center; 
-            border-bottom: 4px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-            border-radius: 0 0 25px 25px; 
-        }
-        .logo-church { width: 70px; margin-bottom: 10px; }
-        .main-header h1 { font-size: 1.4rem; color: var(--primary); letter-spacing: 1px; margin: 0; }
-        
-        .verse-box { 
-            margin: 15px; padding: 20px; 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: white; border-radius: 15px; box-shadow: 0 6px 15px rgba(24, 95, 165, 0.3); 
-        }
-        .verse-text { font-style: italic; font-size: 0.95rem; line-height: 1.4; margin-bottom: 8px; }
-        .verse-ref { font-weight: bold; color: var(--accent); font-size: 0.8rem; }
-
+        .main-header { background: var(--white); padding: 20px; text-align: center; border-bottom: 4px solid var(--primary); border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .logo-church { width: 65px; margin-bottom: 10px; }
+        .verse-box { margin: 15px; padding: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 15px; box-shadow: 0 6px 15px rgba(24, 95, 165, 0.3); }
         .card { background: var(--white); margin: 0 15px 15px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        
         .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
-        .form-select, .form-input { 
-            width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; 
-            background: #f8fafc; margin-bottom: 15px; font-size: 15px;
-        }
-
-        .btn-main { 
-            background: var(--primary); color: white; border: none; padding: 16px; 
-            border-radius: 12px; width: 100%; font-weight: 700; font-size: 16px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            gap: 10px; transition: 0.3s; 
-        }
-        
+        .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .form-select, .form-input { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; margin-bottom: 15px; background: #f8fafc; font-size: 15px; }
         .video-box { width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 15px; margin-bottom: 15px; overflow: hidden; border: 3px solid #e2e8f0; }
         .log-card { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #edf2f7; }
         .log-avatar { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; border: 2px solid var(--primary); }
@@ -60,19 +29,19 @@
 <div class="app-container">
     <header class="main-header">
         <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" class="logo-church">
-        <h1>MISIÓN PAZ</h1>
-        <p style="color: #666; font-size: 11px; font-weight: 600;">GESTIÓN INTEGRAL DE PERSONAL</p>
+        <h1 style="font-size:1.3rem; color:var(--primary); margin:0;">MISIÓN PAZ</h1>
+        <p style="color: #666; font-size: 10px; font-weight: 600;">TECNOLOGÍA EMPRESARIAL</p>
     </header>
 
     <div class="verse-box">
-        <p class="verse-text" id="verseText">"Buscad primeramente el reino de Dios y su justicia."</p>
-        <p class="verse-ref" id="verseRef">Mateo 6:33</p>
+        <p id="vText" style="font-style: italic; font-size: 14px; line-height: 1.4; margin-bottom: 5px;">"Todo lo puedo en Cristo que me fortalece."</p>
+        <small id="vRef" style="color: var(--accent); font-weight: bold;">Filipenses 4:13</small>
     </div>
 
     <div id="screenLogin" class="card">
-        <label class="label-custom">Selecciona el Área</label>
-        <select id="selArea" class="form-select" onchange="filtrarPorArea()">
-            <option value="">-- Elige un área --</option>
+        <label class="label-custom">Área Organizacional</label>
+        <select id="selArea" class="form-select" onchange="filtrarUsuarios()">
+            <option value="">-- Seleccione Área --</option>
             <option value="PRESIDENCIA">PRESIDENCIA</option>
             <option value="GERENCIA CORPORATIVA">GERENCIA CORPORATIVA</option>
             <option value="FINANCIERA">FINANCIERA</option>
@@ -91,19 +60,16 @@
 
         <label class="label-custom">Nombre del Servidor</label>
         <select id="selUser" class="form-select">
-            <option value="">Primero selecciona el área...</option>
+            <option value="">Primero elija área...</option>
         </select>
 
         <label class="label-custom">Contraseña</label>
         <input type="password" id="inputPass" class="form-input" placeholder="••••">
-
-        <button class="btn-main" onclick="intentarEntrar()">
-            <i class="ti ti-lock-open"></i> INICIAR SESIÓN
-        </button>
+        <button class="btn-main" onclick="intentarEntrar()"><i class="ti ti-login"></i> ENTRAR</button>
     </div>
 
     <div id="screenCapture" style="display:none;" class="card">
-        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px; font-size:1rem;"></h3>
+        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px;"></h3>
         <div class="video-box">
             <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
             <canvas id="canvas" style="display:none;"></canvas>
@@ -117,10 +83,10 @@
     </div>
 
     <div id="screenAdmin" style="display:none;" class="card">
-        <h2 id="adminTitle" style="font-size:1.1rem; color:var(--primary); margin-bottom:15px;">Reportes</h2>
-        <button class="btn-main" style="background:#107c41; margin-bottom:15px; font-size:14px;" onclick="exportToExcel()"><i class="ti ti-file-spreadsheet"></i> DESCARGAR EXCEL</button>
+        <h2 id="adminTitle" style="font-size:1rem; color:var(--primary); margin-bottom:15px;">Control</h2>
+        <button class="btn-main" style="background: #107c41; margin-bottom:10px;" onclick="exportToExcel()"><i class="ti ti-file-spreadsheet"></i> EXPORTAR EXCEL</button>
         <div id="logsContainer"></div>
-        <button class="btn-main" style="background:#edf2f7; color:#4a5568; margin-top:20px;" onclick="location.reload()">SALIR</button>
+        <button class="btn-main" style="background:#eee; color:#666; margin-top:20px;" onclick="location.reload()">CERRAR SESIÓN</button>
     </div>
 </div>
 
@@ -139,23 +105,23 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
     let listaUsuarios = [];
     let logsActuales = [];
 
-    async function cargarBaseDatos() {
+    // Cargar usuarios desde la colección "usuarios" de Firebase
+    async function cargarBD() {
         const snap = await getDocs(collection(db, "usuarios"));
         listaUsuarios = [];
         snap.forEach(doc => listaUsuarios.push({ id: doc.id, ...doc.data() }));
     }
-    cargarBaseDatos();
+    cargarBD();
 
-    window.filtrarPorArea = () => {
+    window.filtrarUsuarios = () => {
         const area = document.getElementById('selArea').value;
         const sel = document.getElementById('selUser');
-        sel.innerHTML = '<option value="">-- Elige tu nombre --</option>';
+        sel.innerHTML = '<option value="">-- Seleccione su Nombre --</option>';
         const filtrados = listaUsuarios.filter(u => u.area === area);
-        filtrados.forEach(u => { sel.innerHTML += `<option value="${u.id}">${u.nombre}</option>`; });
+        filtrados.forEach(u => sel.innerHTML += `<option value="${u.id}">${u.nombre}</option>`);
     };
 
     window.intentarEntrar = () => {
@@ -167,31 +133,51 @@
             document.getElementById('screenLogin').style.display = 'none';
             if(user.rol === "JEFE") {
                 document.getElementById('screenAdmin').style.display = 'block';
-                document.getElementById('adminTitle').innerText = `Registros de ${user.area}`;
+                document.getElementById('adminTitle').innerText = `Reporte: ${user.area}`;
                 cargarReportes(user.area);
             } else {
                 document.getElementById('screenCapture').style.display = 'block';
-                document.getElementById('welcomeUser').innerText = `¡Bendiciones, ${user.nombre}!`;
+                document.getElementById('welcomeUser').innerText = `Bendiciones, ${user.nombre}`;
                 window.currentUser = user;
                 startCam();
             }
-        } else { alert("Datos incorrectos."); }
+        } else { alert("Clave incorrecta o usuario no seleccionado"); }
     };
 
-    function startCam() { navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('webcam').srcObject = s); }
+    function startCam() {
+        navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('webcam').srcObject = s);
+    }
+
+    // FUNCIÓN MEJORADA: Captura con Estampado de Seguridad
     window.doPhoto = () => {
         const v = document.getElementById('webcam');
         const c = document.getElementById('canvas');
-        c.width = 320; c.height = 240;
-        c.getContext('2d').drawImage(v, 0, 0, 320, 240);
-        window.currentPhoto = c.toDataURL('image/jpeg', 0.5);
+        const ctx = c.getContext('2d');
+        
+        c.width = 640; 
+        c.height = 480;
+        ctx.drawImage(v, 0, 0, 640, 480);
+        
+        const ahora = new Date();
+        const marca = `${ahora.toLocaleDateString()} | ${ahora.toLocaleTimeString()}`;
+
+        // Franja de seguridad inferior
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+        ctx.fillRect(0, 430, 640, 50);
+
+        // Texto Estampado (Dorado Misión Paz)
+        ctx.fillStyle = "#D4AF37";
+        ctx.font = "bold 22px Arial";
+        ctx.fillText(marca, 20, 465);
+        
+        window.currentPhoto = c.toDataURL('image/jpeg', 0.8);
         document.getElementById('preview').src = window.currentPhoto;
         document.getElementById('preview').style.display = 'block';
         v.style.display = 'none';
     };
 
     window.saveRecord = async (tipo) => {
-        if(!window.currentPhoto) return alert("Captura tu foto.");
+        if(!window.currentPhoto) return alert("Captura la foto");
         navigator.geolocation.getCurrentPosition(async (pos) => {
             await addDoc(collection(db, "asistencias"), {
                 usuario: window.currentUser.nombre,
@@ -201,7 +187,7 @@
                 foto: window.currentPhoto,
                 gps: `${pos.coords.latitude},${pos.coords.longitude}`
             });
-            alert("Registro exitoso.");
+            alert("¡Registro guardado!");
             location.reload();
         });
     };
@@ -213,17 +199,28 @@
             container.innerHTML = "";
             logsActuales = [];
             snap.forEach(doc => {
-                const d = doc.data(); logsActuales.push(d);
-                container.innerHTML += `<div class="log-card"><div style="display:flex; align-items:center; gap:10px;"><img src="${d.foto}" class="log-avatar"><div><b>${d.usuario}</b><br><span>${new Date(d.fecha).toLocaleTimeString()}</span></div></div><a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="color:var(--primary);"><i class="ti ti-map-pin" style="font-size:20px;"></i></a></div>`;
+                const d = doc.data();
+                logsActuales.push(d);
+                container.innerHTML += `
+                    <div class="log-card">
+                        <img src="${d.foto}" class="log-avatar">
+                        <div style="flex:1; margin-left:10px; font-size:12px;">
+                            <b>${d.usuario}</b><br>
+                            ${new Date(d.fecha).toLocaleString()}<br>
+                            <span style="color:${d.tipo=='Entrada'?'green':'red'}">${d.tipo}</span>
+                        </div>
+                        <a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="color:var(--primary);"><i class="ti ti-map-pin" style="font-size:22px;"></i></a>
+                    </div>`;
             });
         });
     }
 
     window.exportToExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(logsActuales.map(l => ({Nombre: l.usuario, Area: l.area, Tipo: l.tipo, Fecha: new Date(l.fecha).toLocaleString()})));
+        if(logsActuales.length === 0) return alert("No hay datos");
+        const ws = XLSX.utils.json_to_sheet(logsActuales.map(l => ({Nombre: l.usuario, Area: l.area, Tipo: l.tipo, Fecha: new Date(l.fecha).toLocaleString(), Ubicacion: l.gps})));
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Reporte");
-        XLSX.writeFile(wb, "Asistencia_MisionPaz.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
+        XLSX.writeFile(wb, "Reporte_MisionPaz.xlsx");
     };
 </script>
 </body>
