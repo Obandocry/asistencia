@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Paz - Sistema Integral v6</title>
+    <title>Misión Paz - Sistema Integral v7</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
@@ -11,31 +11,21 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; }
         .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        /* HEADER */
         .main-header { background: var(--white); padding: 20px; text-align: center; border-bottom: 4px solid var(--primary); border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .logo-church { width: 60px; margin-bottom: 10px; }
-        
-        /* CARDS Y FORMS */
         .card { background: var(--white); margin: 0 15px 15px; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
         .form-select, .form-input, .form-textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #e2e8f0; margin-bottom: 12px; background: #f8fafc; font-size: 14px; }
         .form-textarea { height: 70px; resize: none; border: 2px solid var(--danger); }
-
-        /* DASHBOARD */
         .filter-box { background: var(--secondary); padding: 15px; margin: 0 15px 15px; border-radius: 15px; color: white; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
         .stat-card { background: rgba(255,255,255,0.1); padding: 10px 5px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
         .stat-val { display: block; font-size: 18px; font-weight: 800; color: #fff; }
         .stat-label { font-size: 8px; color: #d1d5db; font-weight: 700; text-transform: uppercase; }
-
-        /* FILTROS TABS */
         .filter-tabs { display: flex; background: #eee; border-radius: 10px; padding: 4px; margin-bottom: 15px; }
         .tab-btn { flex: 1; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; background: transparent; color: #666; }
         .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
-        /* LISTA DE REGISTROS */
         .log-card { display: flex; flex-direction: column; padding: 15px; background: #fff; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .log-avatar { width: 100%; height: auto; aspect-ratio: 4/3; border-radius: 12px; object-fit: cover; margin: 10px 0; border: 1px solid #eee; }
         .nota-box { background: #fffbeb; border: 1px solid #fef3c7; padding: 10px; border-radius: 8px; margin-top: 8px; font-size: 12px; color: #92400e; }
@@ -83,12 +73,10 @@
             </div>
             <button class="btn-main" style="background:#64748b; margin-bottom:10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> CAPTURAR FOTO</button>
         </div>
-
         <div id="seccionJustifica" style="display:none; margin-bottom: 15px;">
             <label class="label-custom" style="color:var(--danger);">Motivo de Retraso / Permiso:</label>
             <textarea id="txtNota" class="form-textarea" placeholder="¿Por qué llegaste tarde o por qué pides permiso?"></textarea>
         </div>
-
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <button class="btn-main" style="background:var(--success);" onclick="saveRecord('Entrada')">LLEGADA</button>
             <button class="btn-main" style="background:var(--danger);" onclick="saveRecord('Salida')">SALIDA</button>
@@ -104,7 +92,6 @@
                 <div class="stat-card"><span id="statSalida" class="stat-val">0</span><span class="stat-label">Salidas</span></div>
             </div>
         </div>
-        
         <div class="card" style="padding:15px;">
             <div class="filter-tabs">
                 <button class="tab-btn active" id="btnAll" onclick="cambiarTipoFiltro('todos')">TODOS</button>
@@ -116,7 +103,6 @@
                 <button class="btn-main" style="background:var(--secondary); font-size:11px;" onclick="exportarExcelTodo()">MENSUAL</button>
             </div>
         </div>
-
         <div id="logsContainer" style="padding: 0 15px;"></div>
         <button class="btn-main" style="background:#fff; color:#666; margin:20px 15px; border:1px solid #ddd;" onclick="location.reload()">CERRAR SESIÓN</button>
     </div>
@@ -186,13 +172,22 @@
         const ctx = c.getContext('2d');
         c.width = 640; c.height = 480;
         ctx.drawImage(v, 0, 0, 640, 480);
+        
+        // FRANJA DORADA DE SEGURIDAD
+        const ahora = new Date();
+        const marca = `${ahora.toLocaleDateString()} | ${ahora.toLocaleTimeString()}`;
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)"; 
+        ctx.fillRect(0, 430, 640, 50); 
+        ctx.fillStyle = "#D4AF37"; 
+        ctx.font = "bold 22px Arial"; 
+        ctx.fillText(marca, 20, 465);
+
         window.currentPhoto = c.toDataURL('image/jpeg', 0.8);
         document.getElementById('preview').src = window.currentPhoto;
         document.getElementById('preview').style.display = 'block';
         v.style.display = 'none';
 
-        // LÓGICA DE HORARIO PERSONALIZADO
-        const ahora = new Date();
+        // LÓGICA DE HORARIO
         const horaE = window.currentUser.horaEntrada || "08:00";
         const [limitH, limitM] = horaE.split(':');
         if(ahora.getHours() > limitH || (ahora.getHours() == limitH && ahora.getMinutes() > limitM)) {
@@ -203,19 +198,13 @@
     window.saveRecord = async (tipo) => {
         if(!window.currentPhoto) return alert("Toma la foto");
         const nota = document.getElementById('txtNota').value;
-        
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const hoy = new Date();
             await addDoc(collection(db, "asistencias"), {
-                usuario: window.currentUser.nombre,
-                area: window.currentUser.area,
-                tipo: tipo,
-                fecha: hoy.toISOString(),
-                fechaCorta: hoy.toISOString().split('T')[0],
-                foto: window.currentPhoto,
-                gps: `${pos.coords.latitude},${pos.coords.longitude}`,
-                nota: nota || "",
-                horarioReferencia: window.currentUser.horaEntrada || "08:00"
+                usuario: window.currentUser.nombre, area: window.currentUser.area, tipo: tipo,
+                fecha: hoy.toISOString(), fechaCorta: hoy.toISOString().split('T')[0],
+                foto: window.currentPhoto, gps: `${pos.coords.latitude},${pos.coords.longitude}`,
+                nota: nota || "", horarioReferencia: window.currentUser.horaEntrada || "08:00"
             });
             alert("Registro Guardado");
             location.reload();
@@ -242,45 +231,33 @@
         const f = document.getElementById('filterDate').value;
         const container = document.getElementById('logsContainer');
         container.innerHTML = "";
-        
         const porFecha = logsGlobales.filter(l => l.fechaCorta === f);
-        
-        // DASHBOARD MATH
         const tardes = porFecha.filter(l => {
             const [hL, mL] = (l.horarioReferencia || "08:00").split(':');
             const d = new Date(l.fecha);
             return l.tipo === 'Entrada' && (d.getHours() > hL || (d.getHours() == hL && d.getMinutes() > mL));
         }).length;
-
         document.getElementById('statTotal').innerText = porFecha.length;
         document.getElementById('statTarde').innerText = tardes;
         document.getElementById('statSalida').innerText = porFecha.filter(l => l.tipo === 'Salida').length;
-
         let filtrados = (tipoFiltroActual === 'todos') ? porFecha : porFecha.filter(l => l.tipo === tipoFiltroActual);
         filtrados.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-
         if(filtrados.length === 0) { container.innerHTML = "<p style='text-align:center;'>Sin registros.</p>"; return; }
-
         filtrados.forEach(async (d) => {
             const dF = new Date(d.fecha);
             const [hR, mR] = (d.horarioReferencia || "08:00").split(':');
             const esTarde = d.tipo === 'Entrada' && (dF.getHours() > hR || (dF.getHours() == hR && dF.getMinutes() > mR));
             const cid = `c${Math.random().toString(36).substr(2,5)}`;
-
             container.innerHTML += `
                 <div class="log-card" style="border-left: 6px solid ${esTarde ? 'var(--danger)' : 'var(--success)'}">
                     <div style="display:flex; justify-content:space-between;">
-                        <div>
-                            <strong>${d.usuario}</strong><br>
-                            <small>${dF.toLocaleTimeString()} (Turno: ${d.horarioReferencia})</small>
-                        </div>
+                        <div><strong>${d.usuario}</strong><br><small>${dF.toLocaleTimeString()} (Turno: ${d.horarioReferencia})</small></div>
                         <span style="background:${d.tipo=='Entrada'?'var(--success)':'var(--danger)'}; color:white; padding:4px 8px; border-radius:6px; font-size:10px; height:fit-content;">${d.tipo}</span>
                     </div>
                     <img src="${d.foto}" class="log-avatar">
                     <small id="addr-${cid}" style="font-size:9px; color:#777;">Buscando dirección...</small>
                     ${d.nota ? `<div class="nota-box"><strong>Nota:</strong> ${d.nota}</div>` : ''}
                 </div>`;
-
             try {
                 const [lat, lon] = d.gps.split(',');
                 const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
@@ -299,7 +276,6 @@
         XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
         XLSX.writeFile(wb, `${n}.xlsx`);
     }
-
     window.exportarExcelDia = () => generarExcel(logsGlobales.filter(l => l.fechaCorta === document.getElementById('filterDate').value), "Reporte_Dia");
     window.exportarExcelTodo = () => generarExcel(logsGlobales, "Reporte_General");
 </script>
