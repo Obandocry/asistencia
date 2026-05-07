@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Paz - Gestión Pro v5</title>
+    <title>Misión Paz - Sistema Integral v6</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
@@ -11,21 +11,34 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; }
         .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* HEADER */
         .main-header { background: var(--white); padding: 20px; text-align: center; border-bottom: 4px solid var(--primary); border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .logo-church { width: 60px; margin-bottom: 10px; }
+        
+        /* CARDS Y FORMS */
         .card { background: var(--white); margin: 0 15px 15px; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
         .form-select, .form-input, .form-textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #e2e8f0; margin-bottom: 12px; background: #f8fafc; font-size: 14px; }
-        .form-textarea { height: 80px; resize: none; }
-        
-        /* DASHBOARD */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
-        .stat-card { background: rgba(255,255,255,0.1); padding: 8px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
-        .stat-val { display: block; font-size: 16px; font-weight: 800; color: #fff; }
-        .stat-label { font-size: 8px; color: #d1d5db; text-transform: uppercase; }
+        .form-textarea { height: 70px; resize: none; border: 2px solid var(--danger); }
 
-        .log-card { display: flex; flex-direction: column; padding: 15px; background: #fff; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); position: relative; }
-        .nota-permiso { background: #fffbeb; border: 1px solid #fef3c7; padding: 8px; border-radius: 8px; margin-top: 10px; font-size: 11px; color: #92400e; }
+        /* DASHBOARD */
+        .filter-box { background: var(--secondary); padding: 15px; margin: 0 15px 15px; border-radius: 15px; color: white; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .stat-card { background: rgba(255,255,255,0.1); padding: 10px 5px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+        .stat-val { display: block; font-size: 18px; font-weight: 800; color: #fff; }
+        .stat-label { font-size: 8px; color: #d1d5db; font-weight: 700; text-transform: uppercase; }
+
+        /* FILTROS TABS */
+        .filter-tabs { display: flex; background: #eee; border-radius: 10px; padding: 4px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; background: transparent; color: #666; }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        /* LISTA DE REGISTROS */
+        .log-card { display: flex; flex-direction: column; padding: 15px; background: #fff; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .log-avatar { width: 100%; height: auto; aspect-ratio: 4/3; border-radius: 12px; object-fit: cover; margin: 10px 0; border: 1px solid #eee; }
+        .nota-box { background: #fffbeb; border: 1px solid #fef3c7; padding: 10px; border-radius: 8px; margin-top: 8px; font-size: 12px; color: #92400e; }
     </style>
 </head>
 <body>
@@ -33,41 +46,52 @@
 <div class="app-container">
     <header class="main-header">
         <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" class="logo-church">
-        <h1 style="font-size:1.1rem; color:var(--primary); margin:0;">CONTROL DE ASISTENCIA</h1>
+        <h1 style="font-size:1.2rem; color:var(--primary); margin:0;">MISION PAZ - ASISTENCIA</h1>
     </header>
 
     <div id="screenLogin" class="card" style="margin-top:20px;">
+        <label class="label-custom">Área</label>
         <select id="selArea" class="form-select" onchange="filtrarUsuarios()">
             <option value="">-- Seleccione Área --</option>
-            <option value="TECNOLOGIA">TECNOLOGÍA</option>
+            <option value="PRESIDENCIA">PRESIDENCIA</option>
+            <option value="GERENCIA CORPORATIVA">GERENCIA CORPORATIVA</option>
+            <option value="FINANCIERA">FINANCIERA</option>
+            <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
+            <option value="TESORERIA">TESORERIA</option>
             <option value="MINISTERIAL">MINISTERIAL</option>
+            <option value="FUNDACION">FUNDACION</option>
+            <option value="UNIVERSIDAD">UNIVERSIDAD</option>
+            <option value="OPTIMIZACION">OPTIMIZACION</option>
+            <option value="ALMACEN">ALMACEN</option>
+            <option value="KIDS">KIDS</option>
+            <option value="SONIDO">SONIDO</option>
             <option value="MEDIA Y PRODUCCION">MEDIA Y PRODUCCION</option>
-            </select>
-        <select id="selUser" class="form-select"><option value="">Primero elija área...</option></select>
+            <option value="TECNOLOGIA">TECNOLOGÍA</option>
+        </select>
+        <select id="selUser" class="form-select"><option value="">Seleccione Nombre...</option></select>
         <input type="password" id="inputPass" class="form-input" placeholder="Contraseña">
         <button class="btn-main" onclick="intentarEntrar()">INGRESAR</button>
     </div>
 
     <div id="screenCapture" style="display:none;" class="card">
-        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:12px; font-size:1rem;"></h3>
-        
+        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:12px;"></h3>
         <div id="areaCamara">
             <div style="width:100%; aspect-ratio:4/3; background:#000; border-radius:15px; overflow:hidden; margin-bottom:12px;">
                 <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
                 <canvas id="canvas" style="display:none;"></canvas>
                 <img id="preview" style="display:none; width:100%; height:100%; object-fit:cover;">
             </div>
-            <button class="btn-main" style="background:#64748b; margin-bottom:10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> TOMAR FOTO</button>
+            <button class="btn-main" style="background:#64748b; margin-bottom:10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> CAPTURAR FOTO</button>
         </div>
 
-        <div id="seccionJustifica" style="display:none; border-top: 1px solid #eee; padding-top: 10px;">
-            <label style="font-size: 11px; font-weight: bold; color: var(--danger);">⚠️ DETECTADO COMO RETARDO O PERMISO</label>
-            <textarea id="txtNota" class="form-textarea" placeholder="Escribe el motivo del retraso o permiso..."></textarea>
+        <div id="seccionJustifica" style="display:none; margin-bottom: 15px;">
+            <label class="label-custom" style="color:var(--danger);">Motivo de Retraso / Permiso:</label>
+            <textarea id="txtNota" class="form-textarea" placeholder="¿Por qué llegaste tarde o por qué pides permiso?"></textarea>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="btn-main" style="background:var(--success);" onclick="prepararEnvio('Entrada')">LLEGADA</button>
-            <button class="btn-main" style="background:var(--danger);" onclick="prepararEnvio('Salida')">SALIDA</button>
+            <button class="btn-main" style="background:var(--success);" onclick="saveRecord('Entrada')">LLEGADA</button>
+            <button class="btn-main" style="background:var(--danger);" onclick="saveRecord('Salida')">SALIDA</button>
         </div>
     </div>
 
@@ -76,11 +100,23 @@
             <input type="date" id="filterDate" class="form-input" style="margin-bottom:10px;" onchange="aplicarFiltroFecha()">
             <div class="dashboard-grid">
                 <div class="stat-card"><span id="statTotal" class="stat-val">0</span><span class="stat-label">Total</span></div>
-                <div class="stat-card"><span id="statTarde" class="stat-val" style="color:#ff8a8a;">0</span><span class="stat-label">Retardos</span></div>
-                <div class="stat-card"><span id="statNotas" class="stat-val" style="color:var(--warning);">0</span><span class="stat-label">Notas</span></div>
+                <div class="stat-card"><span id="statTarde" class="stat-val" style="color:#ff8a8a;">0</span><span class="stat-label">Tarde</span></div>
+                <div class="stat-card"><span id="statSalida" class="stat-val">0</span><span class="stat-label">Salidas</span></div>
             </div>
         </div>
         
+        <div class="card" style="padding:15px;">
+            <div class="filter-tabs">
+                <button class="tab-btn active" id="btnAll" onclick="cambiarTipoFiltro('todos')">TODOS</button>
+                <button class="tab-btn" id="btnEntrada" onclick="cambiarTipoFiltro('Entrada')">ENTRADAS</button>
+                <button class="tab-btn" id="btnSalida" onclick="cambiarTipoFiltro('Salida')">SALIDAS</button>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <button class="btn-main" style="background:var(--success); font-size:11px;" onclick="exportarExcelDia()">EXCEL DÍA</button>
+                <button class="btn-main" style="background:var(--secondary); font-size:11px;" onclick="exportarExcelTodo()">MENSUAL</button>
+            </div>
+        </div>
+
         <div id="logsContainer" style="padding: 0 15px;"></div>
         <button class="btn-main" style="background:#fff; color:#666; margin:20px 15px; border:1px solid #ddd;" onclick="location.reload()">CERRAR SESIÓN</button>
     </div>
@@ -104,6 +140,7 @@
     let listaUsuarios = [];
     let logsGlobales = [];
     let areaJefe = "";
+    let tipoFiltroActual = 'todos';
 
     async function cargarBD() {
         const snap = await getDocs(collection(db, "usuarios"));
@@ -115,7 +152,7 @@
     window.filtrarUsuarios = () => {
         const area = document.getElementById('selArea').value;
         const sel = document.getElementById('selUser');
-        sel.innerHTML = '<option value="">-- Seleccione su Nombre --</option>';
+        sel.innerHTML = '<option value="">-- Seleccione Nombre --</option>';
         listaUsuarios.filter(u => u.area === area).forEach(u => sel.innerHTML += `<option value="${u.id}">${u.nombre}</option>`);
     };
 
@@ -136,7 +173,7 @@
                 window.currentUser = user;
                 startCam();
             }
-        } else { alert("Acceso Incorrecto"); }
+        } else { alert("Datos incorrectos"); }
     };
 
     function startCam() {
@@ -154,17 +191,17 @@
         document.getElementById('preview').style.display = 'block';
         v.style.display = 'none';
 
-        // REVISAR SI LLEGÓ TARDE PARA MOSTRAR CAMPO DE NOTA
+        // LÓGICA DE HORARIO PERSONALIZADO
         const ahora = new Date();
-        const horaEntrada = window.currentUser.horaEntrada || "08:00";
-        const [hE, mE] = horaEntrada.split(':');
-        if (ahora.getHours() > hE || (ahora.getHours() == hE && ahora.getMinutes() > mE)) {
+        const horaE = window.currentUser.horaEntrada || "08:00";
+        const [limitH, limitM] = horaE.split(':');
+        if(ahora.getHours() > limitH || (ahora.getHours() == limitH && ahora.getMinutes() > limitM)) {
             document.getElementById('seccionJustifica').style.display = 'block';
         }
     };
 
-    window.prepararEnvio = async (tipo) => {
-        if(!window.currentPhoto) return alert("Captura la foto");
+    window.saveRecord = async (tipo) => {
+        if(!window.currentPhoto) return alert("Toma la foto");
         const nota = document.getElementById('txtNota').value;
         
         navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -178,11 +215,11 @@
                 foto: window.currentPhoto,
                 gps: `${pos.coords.latitude},${pos.coords.longitude}`,
                 nota: nota || "",
-                horarioAsignado: window.currentUser.horaEntrada || "08:00"
+                horarioReferencia: window.currentUser.horaEntrada || "08:00"
             });
-            alert("Enviado con éxito");
+            alert("Registro Guardado");
             location.reload();
-        }, () => alert("Activa el GPS"));
+        }, () => alert("Enciende el GPS"));
     };
 
     function escucharReportes() {
@@ -194,39 +231,77 @@
         });
     }
 
+    window.cambiarTipoFiltro = (t) => {
+        tipoFiltroActual = t;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(t === 'todos' ? 'btnAll' : t === 'Entrada' ? 'btnEntrada' : 'btnSalida').classList.add('active');
+        aplicarFiltroFecha();
+    };
+
     window.aplicarFiltroFecha = () => {
         const f = document.getElementById('filterDate').value;
         const container = document.getElementById('logsContainer');
         container.innerHTML = "";
-        const filtrados = logsGlobales.filter(l => l.fechaCorta === f).sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
         
-        // Stats
-        document.getElementById('statTotal').innerText = filtrados.length;
-        document.getElementById('statNotas').innerText = filtrados.filter(l => l.nota !== "").length;
+        const porFecha = logsGlobales.filter(l => l.fechaCorta === f);
+        
+        // DASHBOARD MATH
+        const tardes = porFecha.filter(l => {
+            const [hL, mL] = (l.horarioReferencia || "08:00").split(':');
+            const d = new Date(l.fecha);
+            return l.tipo === 'Entrada' && (d.getHours() > hL || (d.getHours() == hL && d.getMinutes() > mL));
+        }).length;
+
+        document.getElementById('statTotal').innerText = porFecha.length;
+        document.getElementById('statTarde').innerText = tardes;
+        document.getElementById('statSalida').innerText = porFecha.filter(l => l.tipo === 'Salida').length;
+
+        let filtrados = (tipoFiltroActual === 'todos') ? porFecha : porFecha.filter(l => l.tipo === tipoFiltroActual);
+        filtrados.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+
+        if(filtrados.length === 0) { container.innerHTML = "<p style='text-align:center;'>Sin registros.</p>"; return; }
 
         filtrados.forEach(async (d) => {
-            const h = new Date(d.fecha);
-            const [hE, mE] = (d.horarioAsignado || "08:00").split(':');
-            const esRetardo = d.tipo === 'Entrada' && (h.getHours() > hE || (h.getHours() == hE && h.getMinutes() > mE));
+            const dF = new Date(d.fecha);
+            const [hR, mR] = (d.horarioReferencia || "08:00").split(':');
+            const esTarde = d.tipo === 'Entrada' && (dF.getHours() > hR || (dF.getHours() == hR && dF.getMinutes() > mR));
             const cid = `c${Math.random().toString(36).substr(2,5)}`;
 
             container.innerHTML += `
-                <div class="log-card" style="border-left: 6px solid ${esRetardo ? 'var(--danger)' : 'var(--success)'}">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <div class="log-card" style="border-left: 6px solid ${esTarde ? 'var(--danger)' : 'var(--success)'}">
+                    <div style="display:flex; justify-content:space-between;">
                         <div>
-                            <strong style="font-size:14px;">${d.usuario}</strong><br>
-                            <small>${h.toLocaleTimeString()} (Turno: ${d.horarioAsignado})</small>
+                            <strong>${d.usuario}</strong><br>
+                            <small>${dF.toLocaleTimeString()} (Turno: ${d.horarioReferencia})</small>
                         </div>
                         <span style="background:${d.tipo=='Entrada'?'var(--success)':'var(--danger)'}; color:white; padding:4px 8px; border-radius:6px; font-size:10px; height:fit-content;">${d.tipo}</span>
                     </div>
                     <img src="${d.foto}" class="log-avatar">
-                    <small id="addr-${cid}" style="font-size:9px; color:#999; margin-top:5px;">Cargando ubicación...</small>
-                    ${d.nota ? `<div class="nota-permiso"><strong>Justificación:</strong> ${d.nota}</div>` : ''}
+                    <small id="addr-${cid}" style="font-size:9px; color:#777;">Buscando dirección...</small>
+                    ${d.nota ? `<div class="nota-box"><strong>Nota:</strong> ${d.nota}</div>` : ''}
                 </div>`;
-            
-            // Geocoding (puedes mantener tu fetch de Nominatim aquí)
+
+            try {
+                const [lat, lon] = d.gps.split(',');
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                const resJ = await res.json();
+                document.getElementById(`addr-${cid}`).innerText = resJ.address.road || resJ.address.suburb || "Cali";
+            } catch (e) { document.getElementById(`addr-${cid}`).innerText = "Cali, Valle"; }
         });
     };
+
+    function generarExcel(lista, n) {
+        const ws = XLSX.utils.json_to_sheet(lista.map(l => ({
+            Nombre: l.usuario, Tipo: l.tipo, Fecha: new Date(l.fecha).toLocaleDateString(), Hora: new Date(l.fecha).toLocaleTimeString(),
+            Nota: l.nota, Mapa: `https://www.google.com/maps?q=${l.gps}`
+        })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
+        XLSX.writeFile(wb, `${n}.xlsx`);
+    }
+
+    window.exportarExcelDia = () => generarExcel(logsGlobales.filter(l => l.fechaCorta === document.getElementById('filterDate').value), "Reporte_Dia");
+    window.exportarExcelTodo = () => generarExcel(logsGlobales, "Reporte_General");
 </script>
 </body>
 </html>
