@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Paz - Sistema de Asistencia Profesional 2026</title>
+    <title>Misión Paz - Control de Asistencia Pro</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
@@ -15,9 +15,9 @@
         .logo-church { width: 60px; margin-bottom: 10px; }
         .card { background: var(--white); margin: 15px; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .form-select, .form-input, .form-textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #e2e8f0; margin-bottom: 12px; background: #f8fafc; font-size: 14px; }
-        .form-textarea { height: 70px; resize: none; border: 2px solid var(--danger); }
+        .form-textarea { height: 70px; border: 2px solid var(--danger); resize: none; }
         .filter-box { background: var(--secondary); padding: 20px; margin: 15px; border-radius: 20px; color: white; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
         .stat-card { background: rgba(255,255,255,0.15); padding: 10px 5px; border-radius: 12px; text-align: center; }
@@ -25,7 +25,8 @@
         .stat-label { font-size: 8px; color: #d1d5db; font-weight: 700; text-transform: uppercase; }
         .log-card { display: flex; flex-direction: column; padding: 15px; background: #fff; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .log-avatar { width: 100%; border-radius: 12px; object-fit: cover; margin: 10px 0; border: 1px solid #eee; }
-        .badge-tarde { background: var(--danger); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .badge-status { padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; color: white; }
+        .badge-time { background: #f0f9ff; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid #bae6fd; }
     </style>
 </head>
 <body>
@@ -33,13 +34,13 @@
 <div class="app-container">
     <header class="main-header">
         <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" class="logo-church">
-        <h1 style="font-size:1.1rem; color:var(--primary); margin:0;">MISION PAZ - CONTROL PRO</h1>
+        <h1 style="font-size:1.1rem; color:var(--primary); margin:0;">REGISTRO DE ASISTENCIA MP</h1>
     </header>
 
     <div id="screenLogin" class="card" style="margin-top:20px;">
         <label class="label-custom">Área de Servicio</label>
         <select id="selArea" class="form-select" onchange="filtrarUsuarios()">
-            <option value="">-- Seleccione Área --</option>
+            <option value="">-- Todas las Áreas --</option>
             <option value="PRESIDENCIA">PRESIDENCIA</option>
             <option value="GERENCIA CORPORATIVA">GERENCIA CORPORATIVA</option>
             <option value="FINANCIERA">FINANCIERA</option>
@@ -67,14 +68,14 @@
             <canvas id="canvas" style="display:none;"></canvas>
             <img id="preview" style="display:none; width:100%; height:100%; object-fit:cover;">
         </div>
-        <button class="btn-main" style="background:#64748b; margin-bottom:10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> TOMAR EVIDENCIA</button>
+        <button class="btn-main" style="background:#64748b; margin-bottom:10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> CAPTURAR EVIDENCIA</button>
         <div id="seccionJustifica" style="display:none; margin-bottom: 15px;">
-            <label class="label-custom" style="color:var(--danger);">Justificar Retraso (Obligatorio):</label>
-            <textarea id="txtNota" class="form-textarea" placeholder="¿Por qué llegaste fuera de horario?"></textarea>
+            <label class="label-custom" style="color:var(--danger);">Motivo de Retraso:</label>
+            <textarea id="txtNota" class="form-textarea" placeholder="¿Por qué llegaste tarde?"></textarea>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="btn-main" style="background:var(--success);" onclick="saveRecord('Entrada')">MARCAR ENTRADA</button>
-            <button class="btn-main" style="background:var(--danger);" onclick="saveRecord('Salida')">MARCAR SALIDA</button>
+            <button class="btn-main" style="background:var(--success);" onclick="saveRecord('Entrada')">ENTRADA</button>
+            <button class="btn-main" style="background:var(--danger);" onclick="saveRecord('Salida')">SALIDA</button>
         </div>
     </div>
 
@@ -82,14 +83,14 @@
         <div class="filter-box">
             <input type="date" id="filterDate" class="form-input" onchange="aplicarFiltroFecha()">
             <div class="dashboard-grid">
-                <div class="stat-card"><span id="statTotal" class="stat-val">0</span><span class="stat-label">Total Día</span></div>
+                <div class="stat-card"><span id="statTotal" class="stat-val">0</span><span class="stat-label">Registros</span></div>
                 <div class="stat-card"><span id="statTarde" class="stat-val" style="color:#ff8a8a;">0</span><span class="stat-label">Retrasos</span></div>
-                <div class="stat-card"><span id="statFestivos" class="stat-val" style="color:var(--accent);">0</span><span class="stat-label">Festivos</span></div>
+                <div class="stat-card"><span id="statHoras" class="stat-val" style="color:var(--accent);">0</span><span class="stat-label">Completados</span></div>
             </div>
         </div>
-        <div class="card" style="padding:15px; display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button class="btn-main" style="font-size:11px; background:var(--success);" onclick="exportarExcelHoy()"><i class="ti ti-calendar-check"></i> EXCEL DÍA</button>
-            <button class="btn-main" style="font-size:11px; background:var(--secondary);" onclick="exportarExcelTodo()"><i class="ti ti-books"></i> MENSUAL NÓMINA</button>
+        <div class="card" style="padding:10px; display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button class="btn-main" style="font-size:11px; background:var(--success);" onclick="exportarExcelHoy()"><i class="ti ti-file-spreadsheet"></i> EXCEL DÍA</button>
+            <button class="btn-main" style="font-size:11px; background:var(--secondary);" onclick="exportarExcelTodo()"><i class="ti ti-archive"></i> HISTORIAL</button>
         </div>
         <div id="logsContainer" style="padding: 0 15px;"></div>
         <button class="btn-main" style="background:#fff; color:#666; margin:20px 15px; border:1px solid #ddd;" onclick="location.reload()">CERRAR PANEL</button>
@@ -111,29 +112,23 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let listaUsuarios = [];
-    let logsGlobales = [];
-    let areaJefe = "";
-
-    const FESTIVOS_2026 = ["2026-01-01", "2026-01-05", "2026-03-23", "2026-04-02", "2026-04-03", "2026-05-01", "2026-05-18", "2026-06-08", "2026-06-15", "2026-06-29", "2026-07-20", "2026-08-07", "2026-08-17", "2026-10-12", "2026-11-02", "2026-11-16", "2026-12-08", "2026-12-25"];
+    let listaUsuarios = [], logsGlobales = [], areaJefe = "";
 
     async function cargarBD() {
         const snap = await getDocs(collection(db, "usuarios"));
-        listaUsuarios = [];
-        snap.forEach(doc => listaUsuarios.push({ id: doc.id, ...doc.data() }));
+        listaUsuarios = []; snap.forEach(doc => listaUsuarios.push({ id: doc.id, ...doc.data() }));
     }
     cargarBD();
 
     window.filtrarUsuarios = () => {
         const area = document.getElementById('selArea').value;
         const sel = document.getElementById('selUser');
-        sel.innerHTML = '<option value="">-- Seleccione Nombre --</option>';
+        sel.innerHTML = '<option value="">-- Seleccionar --</option>';
         listaUsuarios.filter(u => u.area === area || area === "").forEach(u => sel.innerHTML += `<option value="${u.id}">${u.nombre}</option>`);
     };
 
     window.intentarEntrar = () => {
-        const id = document.getElementById('selUser').value;
-        const pass = document.getElementById('inputPass').value;
+        const id = document.getElementById('selUser').value, pass = document.getElementById('inputPass').value;
         const user = listaUsuarios.find(u => u.id === id);
         if(user && user.clave === pass) {
             document.getElementById('screenLogin').style.display = 'none';
@@ -145,22 +140,18 @@
             } else {
                 document.getElementById('screenCapture').style.display = 'block';
                 document.getElementById('welcomeUser').innerText = `Hola, ${user.nombre}`;
-                window.currentUser = user;
-                startCam();
+                window.currentUser = user; startCam();
             }
-        } else { alert("Acceso denegado"); }
+        } else { alert("Acceso Incorrecto"); }
     };
 
-    function startCam() {
-        navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('webcam').srcObject = s);
-    }
+    function startCam() { navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('webcam').srcObject = s); }
 
     window.doPhoto = () => {
         const v = document.getElementById('webcam'), c = document.getElementById('canvas'), ctx = c.getContext('2d');
         c.width = 640; c.height = 480; ctx.drawImage(v, 0, 0, 640, 480);
-        const ahora = new Date();
-        const marca = `${ahora.toLocaleDateString()} | ${ahora.toLocaleTimeString()}`;
-        ctx.fillStyle = "rgba(0, 0, 0, 0.65)"; ctx.fillRect(0, 420, 640, 60); 
+        const ahora = new Date(), marca = `${ahora.toLocaleDateString()} | ${ahora.toLocaleTimeString()}`;
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)"; ctx.fillRect(0, 420, 640, 60); 
         ctx.fillStyle = "#D4AF37"; ctx.font = "bold 24px Arial"; ctx.fillText(marca, 25, 460);
         window.currentPhoto = c.toDataURL('image/jpeg', 0.8);
         document.getElementById('preview').src = window.currentPhoto;
@@ -173,23 +164,19 @@
     };
 
     window.saveRecord = async (tipo) => {
-        if(!window.currentPhoto) return alert("Captura la foto primero");
+        if(!window.currentPhoto) return alert("Falta la foto");
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const hoy = new Date(), fechaC = hoy.toISOString().split('T')[0];
             const [hE, mE] = (window.currentUser.horaEntrada || "08:00").split(':');
             const esTarde = tipo === 'Entrada' && (hoy.getHours() > hE || (hoy.getHours() == hE && hoy.getMinutes() > mE));
-            
             await addDoc(collection(db, "asistencias"), {
                 usuario: window.currentUser.nombre, area: window.currentUser.area, tipo: tipo,
-                fecha: hoy.toISOString(), fechaCorta: fechaC,
-                foto: window.currentPhoto, gps: `${pos.coords.latitude},${pos.coords.longitude}`,
-                nota: document.getElementById('txtNota').value || "",
-                esFestivo: FESTIVOS_2026.includes(fechaC) || hoy.getDay() === 0,
-                retraso: esTarde, horarioAsignado: window.currentUser.horaEntrada || "08:00",
-                nocturno: hoy.getHours() >= 21 || hoy.getHours() < 6
+                fecha: hoy.toISOString(), fechaCorta: fechaC, foto: window.currentPhoto,
+                gps: `${pos.coords.latitude},${pos.coords.longitude}`, nota: document.getElementById('txtNota').value || "",
+                retraso: esTarde, horarioAsignado: window.currentUser.horaEntrada || "08:00"
             });
-            alert("Registro exitoso"); location.reload();
-        }, () => alert("GPS obligatorio para registrar asistencia"));
+            alert("Registro Guardado"); location.reload();
+        }, () => alert("Activa el GPS para marcar"));
     };
 
     function escucharReportes() {
@@ -200,43 +187,55 @@
         });
     }
 
+    function calcularHoras(nombre, fecha, logs) {
+        const delDia = logs.filter(l => l.usuario === nombre && l.fechaCorta === fecha);
+        const e = delDia.find(l => l.tipo === 'Entrada'), s = delDia.find(l => l.tipo === 'Salida');
+        if (e && s) {
+            const d = new Date(s.fecha) - new Date(e.fecha);
+            return `${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m`;
+        }
+        return "Pendiente";
+    }
+
     window.aplicarFiltroFecha = () => {
-        const f = document.getElementById('filterDate').value;
-        const container = document.getElementById('logsContainer'); container.innerHTML = "";
-        const filtrados = logsGlobales.filter(l => l.fechaCorta === f);
-        
+        const f = document.getElementById('filterDate').value, container = document.getElementById('logsContainer');
+        container.innerHTML = ""; const filtrados = logsGlobales.filter(l => l.fechaCorta === f);
         document.getElementById('statTotal').innerText = filtrados.length;
         document.getElementById('statTarde').innerText = filtrados.filter(l => l.retraso).length;
-        document.getElementById('statFestivos').innerText = filtrados.filter(l => l.esFestivo).length;
+        document.getElementById('statHoras').innerText = filtrados.filter(l => l.tipo === 'Salida').length;
         
         filtrados.sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(d => {
+            const jornada = calcularHoras(d.usuario, d.fechaCorta, logsGlobales);
             container.innerHTML += `
                 <div class="log-card" style="border-left: 5px solid ${d.tipo=='Entrada'?'var(--success)':'var(--danger)'}">
-                    <div style="display:flex; justify-content:space-between;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
                         <b>${d.usuario}</b>
-                        ${d.retraso ? '<span class="badge-tarde">RETRASO</span>' : ''}
+                        ${d.retraso ? '<span class="badge-status" style="background:var(--danger)">RETRASO</span>' : '<span class="badge-status" style="background:var(--success)">A TIEMPO</span>'}
                     </div>
-                    <small>${new Date(d.fecha).toLocaleTimeString()} | Horario: ${d.horarioAsignado}</small>
+                    <div style="display:flex; justify-content:space-between; margin:5px 0;">
+                        <small>${new Date(d.fecha).toLocaleTimeString()}</small>
+                        <span class="badge-time"><i class="ti ti-clock"></i> Total: ${jornada}</span>
+                    </div>
                     <img src="${d.foto}" class="log-avatar">
-                    <a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="font-size:11px; color:var(--primary); font-weight:bold; text-decoration:none;">📍 VER UBICACIÓN GPS</a>
-                    ${d.nota ? `<div style="background:#fff4e5; padding:8px; border-radius:6px; font-size:11px; margin-top:5px; border:1px solid #ffdab9;"><b>Justificación:</b> ${d.nota}</div>` : ''}
+                    <a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="font-size:11px; color:var(--primary); font-weight:bold; text-decoration:none;"><i class="ti ti-map-pin"></i> VER UBICACIÓN GPS</a>
+                    ${d.nota ? `<div style="background:#fff4e5; padding:8px; border-radius:8px; font-size:11px; margin-top:8px;"><b>Motivo:</b> ${d.nota}</div>` : ''}
                 </div>`;
         });
     };
 
-    window.exportarExcelHoy = () => generarExcel(logsGlobales.filter(l => l.fechaCorta === document.getElementById('filterDate').value), "Reporte_Diario");
-    window.exportarExcelTodo = () => generarExcel(logsGlobales, "Nomina_Mensual_Completa");
+    window.exportarExcelHoy = () => generarExcel(logsGlobales.filter(l => l.fechaCorta === document.getElementById('filterDate').value), "Reporte_Dia");
+    window.exportarExcelTodo = () => generarExcel(logsGlobales, "Historial_Asistencia");
 
     function generarExcel(data, nombre) {
         const rows = data.map(l => ({
-            Nombre: l.usuario, Fecha: l.fechaCorta, Hora: new Date(l.fecha).toLocaleTimeString(),
-            Tipo: l.tipo, Retraso: l.retraso ? "SÍ" : "NO", Festivo: l.esFestivo ? "SÍ" : "NO", 
-            Nocturno: l.nocturno ? "SÍ" : "NO", Nota: l.nota, Mapa: `https://www.google.com/maps?q=${l.gps}`
+            Nombre: l.usuario, Area: l.area, Fecha: l.fechaCorta, Hora: new Date(l.fecha).toLocaleTimeString(),
+            Tipo: l.tipo, Puntualidad: l.retraso ? "RETRASO" : "A TIEMPO", Tiempo_Jornada: calcularHoras(l.usuario, l.fechaCorta, logsGlobales),
+            Nota: l.nota, GPS: `https://www.google.com/maps?q=${l.gps}`
         }));
         const ws = XLSX.utils.json_to_sheet(rows);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Misión Paz");
-        XLSX.writeFile(wb, `${nombre}_2026.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
+        XLSX.writeFile(wb, `${nombre}.xlsx`);
     }
 </script>
 </body>
