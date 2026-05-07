@@ -3,65 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Paz - Sistema Nómina v8</title>
+    <title>Misión Paz - Sistema Integral v9 (Nómina & GPS)</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
-        :root { --primary: #185FA5; --secondary: #0F4C81; --accent: #D4AF37; --bg: #f0f4f8; --white: #ffffff; --danger: #c53030; --success: #2f855a; }
+        :root { --primary: #185FA5; --secondary: #0F4C81; --accent: #D4AF37; --bg: #f0f4f8; --white: #ffffff; --danger: #c53030; --success: #2f855a; --warning: #f59e0b; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); }
-        .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; }
+        .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        .main-header { background: var(--white); padding: 20px; text-align: center; border-bottom: 4px solid var(--primary); border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .logo-church { width: 60px; margin-bottom: 10px; }
         .card { background: var(--white); margin: 15px; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; }
-        .form-select, .form-input { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #e2e8f0; margin-bottom: 12px; }
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; color: white; }
-        .stat-item { background: rgba(255,255,255,0.15); padding: 10px; border-radius: 10px; text-align: center; font-size: 0.7rem; }
+        .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .form-select, .form-input, .form-textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #e2e8f0; margin-bottom: 12px; background: #f8fafc; font-size: 14px; }
+        .form-textarea { height: 70px; resize: none; border: 2px solid var(--danger); }
+        .filter-box { background: var(--secondary); padding: 20px; margin: 15px; border-radius: 20px; color: white; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .stat-card { background: rgba(255,255,255,0.15); padding: 10px 5px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+        .stat-val { display: block; font-size: 18px; font-weight: 800; color: #fff; }
+        .stat-label { font-size: 8px; color: #d1d5db; font-weight: 700; text-transform: uppercase; }
+        .log-card { display: flex; flex-direction: column; padding: 15px; background: #fff; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .log-avatar { width: 100%; height: auto; aspect-ratio: 4/3; border-radius: 12px; object-fit: cover; margin: 10px 0; border: 1px solid #eee; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <header style="background:white; padding:20px; text-align:center; border-radius:0 0 20px 20px;">
-        <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" style="width:50px;">
-        <h2 style="color:var(--primary); font-size:1.1rem;">GESTIÓN DE TIEMPOS MP</h2>
+    <header class="main-header">
+        <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" class="logo-church">
+        <h1 style="font-size:1.1rem; color:var(--primary); margin:0;">MISION PAZ - GESTIÓN IT</h1>
     </header>
 
-    <div id="screenLogin" class="card">
-        <select id="selArea" class="form-select" onchange="filtrarUsuarios()"><option value="">Seleccione Área</option></select>
-        <select id="selUser" class="form-select"><option value="">Nombre</option></select>
+    <div id="screenLogin" class="card" style="margin-top:20px;">
+        <label class="label-custom">Área Organizacional</label>
+        <select id="selArea" class="form-select" onchange="filtrarUsuarios()">
+            <option value="">-- Seleccione Área --</option>
+            <option value="TECNOLOGIA">TECNOLOGÍA</option>
+            <option value="PRESIDENCIA">PRESIDENCIA</option>
+            <option value="GERENCIA CORPORATIVA">GERENCIA CORPORATIVA</option>
+            <option value="FINANCIERA">FINANCIERA</option>
+            <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
+            <option value="MINISTERIAL">MINISTERIAL</option>
+            <option value="MEDIA Y PRODUCCION">MEDIA Y PRODUCCION</option>
+        </select>
+        <select id="selUser" class="form-select"><option value="">Seleccione Nombre...</option></select>
         <input type="password" id="inputPass" class="form-input" placeholder="Contraseña">
-        <button class="btn-main" onclick="intentarEntrar()">INGRESAR</button>
+        <button class="btn-main" onclick="intentarEntrar()">INGRESAR AL SISTEMA</button>
     </div>
 
     <div id="screenCapture" style="display:none;" class="card">
-        <video id="webcam" autoplay playsinline style="width:100%; border-radius:15px;"></video>
-        <canvas id="canvas" style="display:none;"></canvas>
-        <button class="btn-main" onclick="doPhoto()" style="margin:10px 0;">CAPTURAR</button>
-        <div id="seccionJustifica" style="display:none;"><textarea id="txtNota" class="form-input" placeholder="Justificación"></textarea></div>
+        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:12px;"></h3>
+        <div id="areaCamara">
+            <div style="width:100%; aspect-ratio:4/3; background:#000; border-radius:15px; overflow:hidden; margin-bottom:12px; position: relative;">
+                <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+                <img id="preview" style="display:none; width:100%; height:100%; object-fit:cover;">
+            </div>
+            <button class="btn-main" style="background:#64748b; margin-bottom:10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> CAPTURAR EVIDENCIA</button>
+        </div>
+        <div id="seccionJustifica" style="display:none; margin-bottom: 15px;">
+            <label class="label-custom" style="color:var(--danger);">Motivo de Retraso / Novedad:</label>
+            <textarea id="txtNota" class="form-textarea" placeholder="Indique la razón del retraso o permiso..."></textarea>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="btn-main" style="background:var(--success);" onclick="saveRecord('Entrada')">ENTRADA</button>
-            <button class="btn-main" style="background:var(--danger);" onclick="saveRecord('Salida')">SALIDA</button>
+            <button class="btn-main" style="background:var(--success);" onclick="saveRecord('Entrada')">MARCAR ENTRADA</button>
+            <button class="btn-main" style="background:var(--danger);" onclick="saveRecord('Salida')">MARCAR SALIDA</button>
         </div>
     </div>
 
     <div id="screenAdmin" style="display:none;">
-        <div style="background:var(--secondary); padding:20px; margin:15px; border-radius:20px; color:white;">
-            <input type="date" id="filterDate" class="form-input" onchange="aplicarFiltro()">
-            <div class="stat-grid">
-                <div class="stat-item"><b id="sumHoras">0</b><br>HRS TOTAL</div>
-                <div class="stat-item"><b id="sumNocturnas">0</b><br>NOCTURNAS</div>
-                <div class="stat-item"><b id="sumFestivas">0</b><br>FESTIVAS</div>
+        <div class="filter-box">
+            <input type="date" id="filterDate" class="form-input" onchange="aplicarFiltroFecha()">
+            <div class="dashboard-grid">
+                <div class="stat-card"><span id="statTotal" class="stat-val">0</span><span class="stat-label">Registros</span></div>
+                <div class="stat-card"><span id="statTarde" class="stat-val" style="color:#ff8a8a;">0</span><span class="stat-label">Tardanzas</span></div>
+                <div class="stat-card"><span id="statFestivos" class="stat-val" style="color:var(--accent);">0</span><span class="stat-label">Festivos</span></div>
             </div>
         </div>
-        <div class="card">
-            <button class="btn-main" onclick="exportarExcelTodo()">DESCARGAR REPORTE NÓMINA</button>
+        <div class="card" style="padding:15px; display:flex; gap:10px;">
+            <button class="btn-main" style="font-size:12px;" onclick="exportarExcelTodo()"><i class="ti ti-file-spreadsheet"></i> EXCEL NÓMINA 2026</button>
         </div>
-        <div id="logsContainer"></div>
+        <div id="logsContainer" style="padding: 0 15px;"></div>
+        <button class="btn-main" style="background:#fff; color:#666; margin:20px 15px; border:1px solid #ddd;" onclick="location.reload()">CERRAR SESIÓN</button>
     </div>
 </div>
 
 <script type="module">
-    // --- LISTA DE FESTIVOS COLOMBIA 2026 ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyADQMa7pf-0-FojRTFKeKI_5J-IrlsZZpo",
+        authDomain: "asistencia-misionpaz.firebaseapp.com",
+        projectId: "asistencia-misionpaz",
+        storageBucket: "asistencia-misionpaz.firebasestorage.app",
+        messagingSenderId: "335946160039",
+        appId: "1:335946160039:web:2a146c234f753819c64882"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let listaUsuarios = [];
+    let logsGlobales = [];
+    let areaJefe = "";
+
     const FESTIVOS_2026 = [
         "2026-01-01", "2026-01-05", "2026-03-23", "2026-04-02", "2026-04-03",
         "2026-05-01", "2026-05-18", "2026-06-08", "2026-06-15", "2026-06-29",
@@ -69,62 +115,160 @@
         "2026-11-16", "2026-12-08", "2026-12-25"
     ];
 
-    function esFestivoODomingo(fechaStr) {
-        const d = new Date(fechaStr + "T00:00:00");
-        const esDomingo = d.getDay() === 0;
-        const esFestivo = FESTIVOS_2026.includes(fechaStr);
-        return esDomingo || esFestivo;
+    async function cargarBD() {
+        const snap = await getDocs(collection(db, "usuarios"));
+        listaUsuarios = [];
+        snap.forEach(doc => listaUsuarios.push({ id: doc.id, ...doc.data() }));
     }
+    cargarBD();
 
-    // Lógica para calcular tramos de horas (Simplificada para Analista de Soporte)
-    function analizarTurno(entrada, salida) {
-        const hIn = new Date(entrada);
-        const hOut = new Date(salida);
-        const totalMs = hOut - hIn;
-        const totalHrs = Math.max(0, totalMs / (1000 * 60 * 60));
-
-        let nocturnas = 0;
-        // Si la salida es después de las 21:00 o entrada antes de las 06:00
-        if (hOut.getHours() >= 21 || hIn.getHours() < 6) {
-            // Cálculo aproximado para reporte inicial
-            nocturnas = totalHrs * 0.3; 
-        }
-
-        const fechaCorta = entrada.split('T')[0];
-        const festiva = esFestivoODomingo(fechaCorta);
-
-        return { 
-            total: totalHrs.toFixed(2), 
-            nocturnas: nocturnas.toFixed(2), 
-            festiva: festiva ? totalHrs.toFixed(2) : 0 
-        };
-    }
-
-    // --- EL RESTO DE LA LÓGICA DE FIREBASE Y CAPTURA SE MANTIENE ---
-    // (Incluye la franja dorada en doPhoto y el guardado de GPS)
-    
-    window.exportarExcelTodo = () => {
-        // Agrupamos por usuario para sumar sus horas del mes
-        const dataParaExcel = logsGlobales.map(l => {
-            const analisis = l.tipo === 'Salida' ? {total:0, nocturnas:0, festiva:0} : {total:0, nocturnas:0, festiva:0}; 
-            // Nota: Para un reporte real, el sistema busca la pareja Entrada-Salida
-            return {
-                Usuario: l.usuario,
-                Fecha: l.fechaCorta,
-                Tipo: l.tipo,
-                Hora: new Date(l.fecha).toLocaleTimeString(),
-                Es_Festivo: esFestivoODomingo(l.fechaCorta) ? "SÍ" : "NO",
-                Nota: l.nota
-            };
-        });
-
-        const ws = XLSX.utils.json_to_sheet(dataParaExcel);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Nomina_MisionPaz");
-        XLSX.writeFile(wb, "Reporte_Asistencia_2026.xlsx");
+    window.filtrarUsuarios = () => {
+        const area = document.getElementById('selArea').value;
+        const sel = document.getElementById('selUser');
+        sel.innerHTML = '<option value="">-- Seleccione Nombre --</option>';
+        listaUsuarios.filter(u => u.area === area).forEach(u => sel.innerHTML += `<option value="${u.id}">${u.nombre}</option>`);
     };
 
-    // Reutiliza las funciones de v7: filtrarUsuarios, intentarEntrar, doPhoto, saveRecord
+    window.intentarEntrar = () => {
+        const id = document.getElementById('selUser').value;
+        const pass = document.getElementById('inputPass').value;
+        const user = listaUsuarios.find(u => u.id === id);
+        if(user && user.clave === pass) {
+            document.getElementById('screenLogin').style.display = 'none';
+            if(user.rol === "JEFE") {
+                areaJefe = user.area;
+                document.getElementById('screenAdmin').style.display = 'block';
+                document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+                escucharReportes();
+            } else {
+                document.getElementById('screenCapture').style.display = 'block';
+                document.getElementById('welcomeUser').innerText = `Hola, ${user.nombre}`;
+                window.currentUser = user;
+                startCam();
+            }
+        } else { alert("Acceso denegado"); }
+    };
+
+    function startCam() {
+        navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('webcam').srcObject = s);
+    }
+
+    window.doPhoto = () => {
+        const v = document.getElementById('webcam');
+        const c = document.getElementById('canvas');
+        const ctx = c.getContext('2d');
+        c.width = 640; c.height = 480;
+        ctx.drawImage(v, 0, 0, 640, 480);
+        
+        // MARCA DE AGUA DORADA PROFESIONAL
+        const ahora = new Date();
+        const marca = `${ahora.toLocaleDateString()} | ${ahora.toLocaleTimeString()}`;
+        ctx.fillStyle = "rgba(0, 0, 0, 0.65)"; 
+        ctx.fillRect(0, 420, 640, 60); 
+        ctx.fillStyle = "#D4AF37"; 
+        ctx.font = "bold 24px Arial"; 
+        ctx.fillText(marca, 25, 460);
+
+        window.currentPhoto = c.toDataURL('image/jpeg', 0.8);
+        document.getElementById('preview').src = window.currentPhoto;
+        document.getElementById('preview').style.display = 'block';
+        v.style.display = 'none';
+
+        const horaE = window.currentUser.horaEntrada || "08:00";
+        const [limitH, limitM] = horaE.split(':');
+        if(ahora.getHours() > limitH || (ahora.getHours() == limitH && ahora.getMinutes() > limitM)) {
+            document.getElementById('seccionJustifica').style.display = 'block';
+        }
+    };
+
+    window.saveRecord = async (tipo) => {
+        if(!window.currentPhoto) return alert("Captura la foto de evidencia");
+        
+        // GEOCERCA: Coordenadas Sede Principal (Ejemplo)
+        const LAT_OFICINA = 3.4833; 
+        const LON_OFICINA = -76.5142;
+        const RANGO = 150; // Metros
+
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const uLat = pos.coords.latitude;
+            const uLon = pos.coords.longitude;
+
+            // Haversine para distancia
+            const R = 6371e3;
+            const p1 = uLat * Math.PI/180, p2 = LAT_OFICINA * Math.PI/180;
+            const dP = (LAT_OFICINA-uLat) * Math.PI/180, dL = (LON_OFICINA-uLon) * Math.PI/180;
+            const a = Math.sin(dP/2)**2 + Math.cos(p1)*Math.cos(p2)*Math.sin(dL/2)**2;
+            const dist = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+
+            if(dist > RANGO) {
+                return alert(`Ubicación inválida. Estás a ${Math.round(dist)}m de la oficina.`);
+            }
+
+            const hoy = new Date();
+            const fechaC = hoy.toISOString().split('T')[0];
+            const esFest = FESTIVOS_2026.includes(fechaC) || hoy.getDay() === 0;
+
+            await addDoc(collection(db, "asistencias"), {
+                usuario: window.currentUser.nombre, area: window.currentUser.area, tipo: tipo,
+                fecha: hoy.toISOString(), fechaCorta: fechaC,
+                foto: window.currentPhoto, gps: `${uLat},${uLon}`,
+                nota: document.getElementById('txtNota').value || "",
+                esFestivo: esFest, nocturno: hoy.getHours() >= 21 || hoy.getHours() < 6
+            });
+            alert("Registro exitoso");
+            location.reload();
+        }, () => alert("Activa el GPS para validar tu ubicación"), { enableHighAccuracy: true });
+    };
+
+    function escucharReportes() {
+        const q = query(collection(db, "asistencias"), where("area", "==", areaJefe));
+        onSnapshot(q, (snap) => {
+            logsGlobales = [];
+            snap.forEach(doc => logsGlobales.push(doc.data()));
+            aplicarFiltroFecha();
+        });
+    }
+
+    window.aplicarFiltroFecha = () => {
+        const f = document.getElementById('filterDate').value;
+        const container = document.getElementById('logsContainer');
+        container.innerHTML = "";
+        const filtrados = logsGlobales.filter(l => l.fechaCorta === f);
+        
+        document.getElementById('statTotal').innerText = filtrados.length;
+        document.getElementById('statFestivos').innerText = filtrados.filter(l => l.esFestivo).length;
+        
+        filtrados.sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(d => {
+            const df = new Date(d.fecha);
+            container.innerHTML += `
+                <div class="log-card" style="border-left: 5px solid ${d.tipo=='Entrada'?'var(--success)':'var(--danger)'}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:bold;">${d.usuario}</span>
+                        <span style="font-size:10px; background:#eee; padding:2px 6px; border-radius:4px;">${d.tipo}</span>
+                    </div>
+                    <small style="color:#666;">${df.toLocaleTimeString()} ${d.esFestivo ? '⭐ FESTIVO' : ''}</small>
+                    <img src="${d.foto}" class="log-avatar">
+                    ${d.nota ? `<div style="background:#fff4e5; padding:8px; border-radius:6px; font-size:11px;"><b>Nota:</b> ${d.nota}</div>` : ''}
+                </div>`;
+        });
+    };
+
+    window.exportarExcelTodo = () => {
+        const data = logsGlobales.map(l => ({
+            Nombre: l.usuario,
+            Fecha: l.fechaCorta,
+            Hora: new Date(l.fecha).toLocaleTimeString(),
+            Movimiento: l.tipo,
+            Festivo: l.esFestivo ? "SÍ" : "NO",
+            Recargo_Nocturno: l.nocturno ? "SÍ" : "NO",
+            Nota: l.nota,
+            Ubicacion_GPS: l.gps
+        }));
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Reporte_Nomina");
+        XLSX.writeFile(wb, "Nomina_MisionPaz_2026.xlsx");
+    };
 </script>
 </body>
 </html>
