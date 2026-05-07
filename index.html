@@ -3,66 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asistencia - Misión Paz</title>
+    <title>Misión Paz - Gestión de Personal</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
-        :root { --primary: #185FA5; --gold: #D4AF37; --bg: #f4f7f9; }
+        :root { 
+            --primary: #185FA5; 
+            --secondary: #0F4C81; 
+            --accent: #D4AF37; 
+            --bg: #f0f4f8; 
+            --white: #ffffff; 
+        }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 10px; }
-        .app { max-width: 500px; margin: 0 auto; }
-        .header { display: flex; align-items: center; gap: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; border-bottom: 4px solid var(--primary); }
-        .logo-img { width: 50px; height: 50px; object-fit: contain; }
-        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        .btn { padding: 15px; border-radius: 10px; border: none; cursor: pointer; width: 100%; font-weight: 700; font-size: 14px; margin-top: 10px; transition: 0.3s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .video-container { background: #000; border-radius: 15px; overflow: hidden; margin-bottom: 10px; aspect-ratio: 4/3; }
-        .log-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; }
+        .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .main-header { 
+            background: var(--white); padding: 20px; text-align: center; 
+            border-bottom: 4px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            border-radius: 0 0 25px 25px; 
+        }
+        .logo-church { width: 70px; margin-bottom: 10px; }
+        .main-header h1 { font-size: 1.4rem; color: var(--primary); letter-spacing: 1px; margin: 0; }
+        
+        .verse-box { 
+            margin: 15px; padding: 20px; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; border-radius: 15px; box-shadow: 0 6px 15px rgba(24, 95, 165, 0.3); 
+        }
+        .verse-text { font-style: italic; font-size: 0.95rem; line-height: 1.4; margin-bottom: 8px; }
+        .verse-ref { font-weight: bold; color: var(--accent); font-size: 0.8rem; }
+
+        .card { background: var(--white); margin: 0 15px 15px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
+        .form-select, .form-input { 
+            width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; 
+            background: #f8fafc; margin-bottom: 15px; font-size: 15px;
+        }
+
+        .btn-main { 
+            background: var(--primary); color: white; border: none; padding: 16px; 
+            border-radius: 12px; width: 100%; font-weight: 700; font-size: 16px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; transition: 0.3s; 
+        }
+        
+        .video-box { width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 15px; margin-bottom: 15px; overflow: hidden; border: 3px solid #e2e8f0; }
+        .log-card { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #edf2f7; }
+        .log-avatar { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; border: 2px solid var(--primary); }
     </style>
 </head>
 <body>
 
-<div class="app">
-    <header class="header">
-        <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" class="logo-img">
-        <div><h1 style="font-size:1.1rem; color:var(--primary)">MISIÓN PAZ</h1><p style="font-size:9px; color:gray;">SISTEMA DE ASISTENCIA CLOUD</p></div>
+<div class="app-container">
+    <header class="main-header">
+        <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" class="logo-church">
+        <h1>MISIÓN PAZ</h1>
+        <p style="color: #666; font-size: 11px; font-weight: 600;">GESTIÓN INTEGRAL DE PERSONAL</p>
     </header>
 
-    <div id="loginScreen" class="card">
-        <select id="loginUser" class="btn" style="background:#f8fafc; border:1px solid #ddd;">
-            <option value="">¿Quién eres?</option>
-            <option value="admin">Liderazgo (Admin)</option>
-            <option value="colaborador">Colaborador / Voluntario</option>
+    <div class="verse-box">
+        <p class="verse-text" id="verseText">"Buscad primeramente el reino de Dios y su justicia."</p>
+        <p class="verse-ref" id="verseRef">Mateo 6:33</p>
+    </div>
+
+    <div id="screenLogin" class="card">
+        <label class="label-custom">Selecciona el Área</label>
+        <select id="selArea" class="form-select" onchange="filtrarPorArea()">
+            <option value="">-- Elige un área --</option>
+            <option value="PRESIDENCIA">PRESIDENCIA</option>
+            <option value="GERENCIA CORPORATIVA">GERENCIA CORPORATIVA</option>
+            <option value="FINANCIERA">FINANCIERA</option>
+            <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
+            <option value="TESORERIA">TESORERIA</option>
+            <option value="MINISTERIAL">MINISTERIAL</option>
+            <option value="FUNDACION">FUNDACION</option>
+            <option value="UNIVERSIDAD">UNIVERSIDAD</option>
+            <option value="OPTIMIZACION">OPTIMIZACION</option>
+            <option value="ALMACEN">ALMACEN</option>
+            <option value="KIDS">KIDS</option>
+            <option value="SONIDO">SONIDO</option>
+            <option value="MEDIA Y PRODUCCION">MEDIA Y PRODUCCION</option>
+            <option value="TECNOLOGIA">TECNOLOGÍA</option>
         </select>
-        <button class="btn btn-primary" onclick="login()">INGRESAR AL SISTEMA</button>
+
+        <label class="label-custom">Nombre del Servidor</label>
+        <select id="selUser" class="form-select">
+            <option value="">Primero selecciona el área...</option>
+        </select>
+
+        <label class="label-custom">Contraseña</label>
+        <input type="password" id="inputPass" class="form-input" placeholder="••••">
+
+        <button class="btn-main" onclick="intentarEntrar()">
+            <i class="ti ti-lock-open"></i> INICIAR SESIÓN
+        </button>
     </div>
 
-    <div id="adminScreen" style="display:none;" class="card">
-        <h3 style="margin-bottom:10px; color:var(--primary);">Registros en la Nube</h3>
-        <div id="adminLogs">Cargando datos...</div>
-        <button class="btn" onclick="location.reload()" style="background:#eee;">Cerrar Sesión</button>
+    <div id="screenCapture" style="display:none;" class="card">
+        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px; font-size:1rem;"></h3>
+        <div class="video-box">
+            <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="preview" style="display:none; width:100%; height:100%; object-fit:cover;">
+        </div>
+        <button class="btn-main" style="background: #64748b; margin-bottom: 10px;" onclick="doPhoto()"><i class="ti ti-camera"></i> CAPTURAR FOTO</button>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button class="btn-main" style="background:#2f855a;" onclick="saveRecord('Entrada')">LLEGADA</button>
+            <button class="btn-main" style="background:#c53030;" onclick="saveRecord('Salida')">SALIDA</button>
+        </div>
     </div>
 
-    <div id="workerScreen" style="display:none;" class="card">
-        <div class="video-container">
-            <video id="videoEl" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-            <canvas id="canvasEl" style="display:none;"></canvas>
-            <img id="photoPreview" style="display:none; width:100%; height:100%; object-fit:cover;">
-        </div>
-        <button id="btnPhoto" class="btn" style="background:#64748b; color:white;" onclick="takePhoto()">TOMAR FOTO DE CONTROL</button>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="btn" style="background:#0F6E56; color:white;" onclick="report('Entrada')">LLEGADA</button>
-            <button class="btn" style="background:#993C1D; color:white;" onclick="report('Salida')">SALIDA</button>
-        </div>
-        <p id="statusMsg" style="text-align:center; margin-top:10px; font-size:12px; color:var(--primary); font-weight:bold;"></p>
+    <div id="screenAdmin" style="display:none;" class="card">
+        <h2 id="adminTitle" style="font-size:1.1rem; color:var(--primary); margin-bottom:15px;">Reportes</h2>
+        <button class="btn-main" style="background:#107c41; margin-bottom:15px; font-size:14px;" onclick="exportToExcel()"><i class="ti ti-file-spreadsheet"></i> DESCARGAR EXCEL</button>
+        <div id="logsContainer"></div>
+        <button class="btn-main" style="background:#edf2f7; color:#4a5568; margin-top:20px;" onclick="location.reload()">SALIR</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // CONFIGURACIÓN DE TU PROYECTO
     const firebaseConfig = {
         apiKey: "AIzaSyADQMa7pf-0-FojRTFKeKI_5J-IrlsZZpo",
         authDomain: "asistencia-misionpaz.firebaseapp.com",
@@ -75,68 +140,91 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    window.login = () => {
-        const user = document.getElementById('loginUser').value;
-        if(!user) return alert("Selecciona un usuario");
-        document.getElementById('loginScreen').style.display = 'none';
-        if(user === 'admin') {
-            document.getElementById('adminScreen').style.display = 'block';
-            listenLogs();
-        } else {
-            document.getElementById('workerScreen').style.display = 'block';
-            navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('videoEl').srcObject = s);
-        }
+    let listaUsuarios = [];
+    let logsActuales = [];
+
+    async function cargarBaseDatos() {
+        const snap = await getDocs(collection(db, "usuarios"));
+        listaUsuarios = [];
+        snap.forEach(doc => listaUsuarios.push({ id: doc.id, ...doc.data() }));
+    }
+    cargarBaseDatos();
+
+    window.filtrarPorArea = () => {
+        const area = document.getElementById('selArea').value;
+        const sel = document.getElementById('selUser');
+        sel.innerHTML = '<option value="">-- Elige tu nombre --</option>';
+        const filtrados = listaUsuarios.filter(u => u.area === area);
+        filtrados.forEach(u => { sel.innerHTML += `<option value="${u.id}">${u.nombre}</option>`; });
     };
 
-    window.takePhoto = () => {
-        const v = document.getElementById('videoEl');
-        const c = document.getElementById('canvasEl');
-        c.width = 320; c.height = 240; // Tamaño pequeño para ahorrar espacio gratis
+    window.intentarEntrar = () => {
+        const id = document.getElementById('selUser').value;
+        const pass = document.getElementById('inputPass').value;
+        const user = listaUsuarios.find(u => u.id === id);
+
+        if(user && user.clave === pass) {
+            document.getElementById('screenLogin').style.display = 'none';
+            if(user.rol === "JEFE") {
+                document.getElementById('screenAdmin').style.display = 'block';
+                document.getElementById('adminTitle').innerText = `Registros de ${user.area}`;
+                cargarReportes(user.area);
+            } else {
+                document.getElementById('screenCapture').style.display = 'block';
+                document.getElementById('welcomeUser').innerText = `¡Bendiciones, ${user.nombre}!`;
+                window.currentUser = user;
+                startCam();
+            }
+        } else { alert("Datos incorrectos."); }
+    };
+
+    function startCam() { navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('webcam').srcObject = s); }
+    window.doPhoto = () => {
+        const v = document.getElementById('webcam');
+        const c = document.getElementById('canvas');
+        c.width = 320; c.height = 240;
         c.getContext('2d').drawImage(v, 0, 0, 320, 240);
-        window.lastPhoto = c.toDataURL('image/jpeg', 0.5); // Comprimida
-        document.getElementById('photoPreview').src = window.lastPhoto;
-        document.getElementById('photoPreview').style.display = 'block';
+        window.currentPhoto = c.toDataURL('image/jpeg', 0.5);
+        document.getElementById('preview').src = window.currentPhoto;
+        document.getElementById('preview').style.display = 'block';
         v.style.display = 'none';
-        document.getElementById('btnPhoto').innerText = "CAMBIAR FOTO";
     };
 
-    window.report = async (tipo) => {
-        if(!window.lastPhoto) return alert("Primero tómate la foto");
-        document.getElementById('statusMsg').innerText = "Guardando en la nube...";
-        
+    window.saveRecord = async (tipo) => {
+        if(!window.currentPhoto) return alert("Captura tu foto.");
         navigator.geolocation.getCurrentPosition(async (pos) => {
-            try {
-                await addDoc(collection(db, "asistencias"), {
-                    usuario: document.getElementById('loginUser').value,
-                    tipo: tipo,
-                    fecha: new Date().toISOString(),
-                    foto: window.lastPhoto,
-                    gps: `${pos.coords.latitude},${pos.coords.longitude}`
-                });
-                alert("¡Registro exitoso en la nube! Bendiciones.");
-                location.reload();
-            } catch (e) { alert("Error: Revisa que Firestore esté en 'Modo Prueba'"); }
-        }, () => alert("Activa el GPS para marcar asistencia"));
+            await addDoc(collection(db, "asistencias"), {
+                usuario: window.currentUser.nombre,
+                area: window.currentUser.area,
+                tipo: tipo,
+                fecha: new Date().toISOString(),
+                foto: window.currentPhoto,
+                gps: `${pos.coords.latitude},${pos.coords.longitude}`
+            });
+            alert("Registro exitoso.");
+            location.reload();
+        });
     };
 
-    function listenLogs() {
-        const q = query(collection(db, "asistencias"), orderBy("fecha", "desc"));
+    function cargarReportes(area) {
+        const q = query(collection(db, "asistencias"), where("area", "==", area));
         onSnapshot(q, (snap) => {
-            const cont = document.getElementById('adminLogs');
-            cont.innerHTML = "";
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = "";
+            logsActuales = [];
             snap.forEach(doc => {
-                const d = doc.data();
-                cont.innerHTML += `
-                    <div class="log-item">
-                        <img src="${d.foto}" class="avatar">
-                        <div style="flex:1; margin-left:10px;">
-                            <b>${d.usuario}</b><br><small>${d.tipo} - ${new Date(d.fecha).toLocaleTimeString()}</small>
-                        </div>
-                        <a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="color:var(--primary); font-size:10px; font-weight:bold;">MAPA</a>
-                    </div>`;
+                const d = doc.data(); logsActuales.push(d);
+                container.innerHTML += `<div class="log-card"><div style="display:flex; align-items:center; gap:10px;"><img src="${d.foto}" class="log-avatar"><div><b>${d.usuario}</b><br><span>${new Date(d.fecha).toLocaleTimeString()}</span></div></div><a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="color:var(--primary);"><i class="ti ti-map-pin" style="font-size:20px;"></i></a></div>`;
             });
         });
     }
+
+    window.exportToExcel = () => {
+        const ws = XLSX.utils.json_to_sheet(logsActuales.map(l => ({Nombre: l.usuario, Area: l.area, Tipo: l.tipo, Fecha: new Date(l.fecha).toLocaleString()})));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Reporte");
+        XLSX.writeFile(wb, "Asistencia_MisionPaz.xlsx");
+    };
 </script>
 </body>
 </html>
