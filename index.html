@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Paz - Control Pro</title>
+    <title>Misión Paz - Control Pro v4</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
@@ -17,11 +17,22 @@
         .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
         .form-select, .form-input { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; margin-bottom: 15px; background: #f8fafc; font-size: 15px; }
-        .log-card { display: flex; flex-direction: column; padding: 20px 15px; background: #fff; margin-bottom: 12px; border-radius: 12px; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        
+        /* DASHBOARD */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .stat-card { background: rgba(255,255,255,0.1); padding: 10px 5px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+        .stat-val { display: block; font-size: 18px; font-weight: 800; color: #fff; }
+        .stat-label { font-size: 8px; color: #d1d5db; font-weight: 700; text-transform: uppercase; }
+
+        /* TABS FILTRO */
+        .filter-tabs { display: flex; background: #eee; border-radius: 10px; padding: 4px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; border: none; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; background: transparent; color: #666; }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        .log-card { display: flex; flex-direction: column; padding: 20px 15px; background: #fff; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .log-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .log-avatar { width: 100%; height: auto; aspect-ratio: 4/3; border-radius: 12px; object-fit: cover; border: 2px solid #eee; }
         .filter-box { background: var(--secondary); padding: 15px; margin: 0 15px 15px; border-radius: 15px; color: white; }
-        .badge-status { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
@@ -29,13 +40,13 @@
 <div class="app-container">
     <header class="main-header">
         <img src="https://misionpaz.org/wp-content/uploads/2024/07/cropped-logos157x157-3.png" class="logo-church">
-        <h1 style="font-size:1.3rem; color:var(--primary); margin:0;">SISTEMA ASISTENCIA</h1>
+        <h1 style="font-size:1.3rem; color:var(--primary); margin:0;">MISION PAZ IT</h1>
     </header>
 
     <div id="screenLogin" class="card" style="margin-top:20px;">
-        <label class="label-custom">Seleccione su Área</label>
+        <label class="label-custom">Área Organizacional</label>
         <select id="selArea" class="form-select" onchange="filtrarUsuarios()">
-            <option value="">-- Áreas --</option>
+            <option value="">-- Seleccione Área --</option>
             <option value="PRESIDENCIA">PRESIDENCIA</option>
             <option value="GERENCIA CORPORATIVA">GERENCIA CORPORATIVA</option>
             <option value="FINANCIERA">FINANCIERA</option>
@@ -53,11 +64,11 @@
         </select>
         <select id="selUser" class="form-select"><option value="">Primero elija área...</option></select>
         <input type="password" id="inputPass" class="form-input" placeholder="Contraseña">
-        <button class="btn-main" onclick="intentarEntrar()">INGRESAR</button>
+        <button class="btn-main" onclick="intentarEntrar()">ENTRAR AL SISTEMA</button>
     </div>
 
     <div id="screenCapture" style="display:none;" class="card">
-        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px; font-size: 1.1rem;"></h3>
+        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px;"></h3>
         <div style="width:100%; aspect-ratio:4/3; background:#000; border-radius:15px; overflow:hidden; margin-bottom:15px; border: 3px solid #e2e8f0;">
             <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
             <canvas id="canvas" style="display:none;"></canvas>
@@ -72,11 +83,22 @@
 
     <div id="screenAdmin" style="display:none;">
         <div class="filter-box">
-            <label class="label-custom" style="color:white;">Control por Día:</label>
-            <input type="date" id="filterDate" class="form-input" style="margin-bottom:0;" onchange="aplicarFiltroFecha()">
+            <label class="label-custom" style="color:white;">Fecha de Reporte:</label>
+            <input type="date" id="filterDate" class="form-input" style="margin-bottom:10px;" onchange="aplicarFiltroFecha()">
+            
+            <div class="dashboard-grid">
+                <div class="stat-card"><span id="statTotal" class="stat-val">0</span><span class="stat-label">Total</span></div>
+                <div class="stat-card"><span id="statTarde" class="stat-val" style="color:#ff8a8a;">0</span><span class="stat-label">Retardos</span></div>
+                <div class="stat-card"><span id="statSalida" class="stat-val">0</span><span class="stat-label">Salidas</span></div>
+            </div>
         </div>
         
         <div class="card" style="padding:15px;">
+            <div class="filter-tabs">
+                <button class="tab-btn active" id="btnAll" onclick="cambiarTipoFiltro('todos')">TODOS</button>
+                <button class="tab-btn" id="btnEntrada" onclick="cambiarTipoFiltro('Entrada')">ENTRADAS</button>
+                <button class="tab-btn" id="btnSalida" onclick="cambiarTipoFiltro('Salida')">SALIDAS</button>
+            </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <button class="btn-main" style="background:var(--success); font-size:11px;" onclick="exportarExcelDia()">EXCEL DÍA</button>
                 <button class="btn-main" style="background:var(--secondary); font-size:11px;" onclick="exportarExcelTodo()">REPORTE TOTAL</button>
@@ -106,6 +128,7 @@
     let listaUsuarios = [];
     let logsGlobales = [];
     let areaJefe = "";
+    let tipoFiltroActual = 'todos';
 
     async function cargarBD() {
         const snap = await getDocs(collection(db, "usuarios"));
@@ -134,11 +157,11 @@
                 escucharReportes();
             } else {
                 document.getElementById('screenCapture').style.display = 'block';
-                document.getElementById('welcomeUser').innerText = `Bienvenido, ${user.nombre}`;
+                document.getElementById('welcomeUser').innerText = `Bendiciones, ${user.nombre}`;
                 window.currentUser = user;
                 startCam();
             }
-        } else { alert("Acceso denegado"); }
+        } else { alert("Datos incorrectos"); }
     };
 
     function startCam() {
@@ -162,7 +185,7 @@
     };
 
     window.saveRecord = async (tipo) => {
-        if(!window.currentPhoto) return alert("Captura la foto primero");
+        if(!window.currentPhoto) return alert("Captura la foto");
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const hoy = new Date();
             await addDoc(collection(db, "asistencias"), {
@@ -174,9 +197,9 @@
                 foto: window.currentPhoto,
                 gps: `${pos.coords.latitude},${pos.coords.longitude}`
             });
-            alert("¡Registro exitoso!");
+            alert("Registro Guardado");
             location.reload();
-        }, () => alert("GPS Obligatorio"));
+        }, () => alert("Activa el GPS"));
     };
 
     function escucharReportes() {
@@ -188,63 +211,77 @@
         });
     }
 
+    window.cambiarTipoFiltro = (t) => {
+        tipoFiltroActual = t;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if(t === 'todos') document.getElementById('btnAll').classList.add('active');
+        if(t === 'Entrada') document.getElementById('btnEntrada').classList.add('active');
+        if(t === 'Salida') document.getElementById('btnSalida').classList.add('active');
+        aplicarFiltroFecha();
+    };
+
     window.aplicarFiltroFecha = () => {
         const f = document.getElementById('filterDate').value;
         const container = document.getElementById('logsContainer');
         container.innerHTML = "";
-        const filtrados = logsGlobales.filter(l => l.fechaCorta === f).sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
         
-        if(filtrados.length === 0) { container.innerHTML = "<p style='text-align:center;'>Sin datos.</p>"; return; }
+        const porFecha = logsGlobales.filter(l => l.fechaCorta === f);
+        
+        // DASHBOARD MATH
+        const retardos = porFecha.filter(l => l.tipo === 'Entrada' && (new Date(l.fecha).getHours() > 8 || (new Date(l.fecha).getHours() === 8 && new Date(l.fecha).getMinutes() > 0))).length;
+        document.getElementById('statTotal').innerText = porFecha.length;
+        document.getElementById('statTarde').innerText = retardos;
+        document.getElementById('statSalida').innerText = porFecha.filter(l => l.tipo === 'Salida').length;
+
+        let filtrados = porFecha;
+        if(tipoFiltroActual !== 'todos') filtrados = porFecha.filter(l => l.tipo === tipoFiltroActual);
+        filtrados.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+
+        if(filtrados.length === 0) { container.innerHTML = "<p style='text-align:center; padding:20px;'>Sin registros.</p>"; return; }
 
         filtrados.forEach(async (d) => {
-            const horaActual = new Date(d.fecha);
-            // Lógica: Si es Entrada y pasa de las 8:00:00 AM es Retardo
-            const esRetardo = d.tipo === 'Entrada' && (horaActual.getHours() > 8 || (horaActual.getHours() === 8 && horaActual.getMinutes() > 0));
-            const cardId = `c${Math.random().toString(36).substr(2,5)}`;
+            const h = new Date(d.fecha);
+            const esRetardo = d.tipo === 'Entrada' && (h.getHours() > 8 || (h.getHours() === 8 && h.getMinutes() > 0));
+            const cid = `c${Math.random().toString(36).substr(2,5)}`;
 
             container.innerHTML += `
                 <div class="log-card" style="border-left: 6px solid ${esRetardo ? 'var(--danger)' : 'var(--success)'}">
                     <div class="log-header">
                         <div>
-                            <strong style="color:var(--primary); font-size:14px;">${d.usuario}</strong><br>
-                            <small style="font-weight:700;">${horaActual.toLocaleTimeString()}</small>
+                            <strong style="font-size:14px; color:var(--primary);">${d.usuario}</strong><br>
+                            <small style="font-weight:700;">${h.toLocaleTimeString()}</small>
                             ${esRetardo ? '<br><span style="color:var(--danger); font-size:9px; font-weight:900;">⚠️ RETARDO</span>' : ''}
                         </div>
                         <div style="text-align:right;">
-                            <span class="badge-status" style="background:${d.tipo=='Entrada'?'var(--success)':'var(--danger)'}">${d.tipo.toUpperCase()}</span>
-                            <br><small id="addr-${cardId}" style="font-size:9px; color:#777;">Buscando dirección...</small>
+                            <span style="background:${d.tipo=='Entrada'?'var(--success)':'var(--danger)'}; color:white; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:bold;">${d.tipo.toUpperCase()}</span>
+                            <br><small id="addr-${cid}" style="font-size:9px; color:#777;">Localizando...</small>
                         </div>
                     </div>
                     <img src="${d.foto}" class="log-avatar">
                 </div>`;
 
-            // Geocodificación Gratuita (Nominatim)
             try {
                 const [lat, lon] = d.gps.split(',');
                 const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
                 const data = await res.json();
-                const texto = data.address.road || data.address.suburb || "Cali, Valle";
-                document.getElementById(`addr-${cardId}`).innerText = texto;
-            } catch (e) { document.getElementById(`addr-${cardId}`).innerText = "Ubicación detectada"; }
+                document.getElementById(`addr-${cid}`).innerText = data.address.road || data.address.suburb || "Cali";
+            } catch (e) { document.getElementById(`addr-${cid}`).innerText = "Cali, Valle"; }
         });
     };
 
-    function generarExcel(lista, nombre) {
+    function generarExcel(lista, n) {
         const ws = XLSX.utils.json_to_sheet(lista.map(l => ({
-            Nombre: l.usuario,
-            Tipo: l.tipo,
-            Fecha: new Date(l.fecha).toLocaleDateString(),
-            Hora: new Date(l.fecha).toLocaleTimeString(),
+            Nombre: l.usuario, Tipo: l.tipo, Fecha: new Date(l.fecha).toLocaleDateString(), Hora: new Date(l.fecha).toLocaleTimeString(),
             Estado: (l.tipo === 'Entrada' && (new Date(l.fecha).getHours() > 8 || (new Date(l.fecha).getHours() === 8 && new Date(l.fecha).getMinutes() > 0))) ? 'RETARDO' : 'A TIEMPO',
             Mapa: `https://www.google.com/maps?q=${l.gps}`
         })));
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Hoja1");
-        XLSX.writeFile(wb, `${nombre}.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
+        XLSX.writeFile(wb, `${n}.xlsx`);
     }
 
-    window.exportarExcelDia = () => generarExcel(logsGlobales.filter(l => l.fechaCorta === document.getElementById('filterDate').value), "Reporte_Dia");
-    window.exportarExcelTodo = () => generarExcel(logsGlobales.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)), "Reporte_Completo");
+    window.exportarExcelDia = () => generarExcel(logsGlobales.filter(l => l.fechaCorta === document.getElementById('filterDate').value), "Dia_Reporte");
+    window.exportarExcelTodo = () => generarExcel(logsGlobales.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)), "Reporte_General");
 </script>
 </body>
 </html>
