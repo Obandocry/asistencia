@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Paz - Cloud Technology Pro</title>
+    <title>Misión Paz - Cloud Technology Pro (Fotos Ampliadas)</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     
@@ -18,10 +18,38 @@
         .card { background: var(--white); margin: 0 15px 15px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .label-custom { display: block; font-weight: 700; color: var(--secondary); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .btn-main:active { transform: scale(0.98); }
         .form-select, .form-input { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; margin-bottom: 15px; background: #f8fafc; font-size: 15px; }
         .video-box { width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 15px; margin-bottom: 15px; overflow: hidden; border: 3px solid #e2e8f0; }
-        .log-card { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #edf2f7; }
-        .log-avatar { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; border: 2px solid var(--primary); }
+        
+        /* --- AJUSTE DE FOTOS MÁS GRANDES EN REPORTES --- */
+        .log-card { 
+            display: flex; 
+            flex-direction: column; /* Cambiamos a columna para dar más espacio a la foto */
+            padding: 20px 15px; 
+            border-bottom: 3px solid #eee; /* Borde más grueso para separar reportes */
+            background: #fff;
+            margin-bottom: 10px;
+            border-radius: 12px;
+        }
+        
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .log-avatar { 
+            width: 100%; /* La foto ocupa todo el ancho de la tarjeta */
+            height: auto; /* Mantiene la proporción de la foto */
+            aspect-ratio: 4/3; /* Proporción estándar */
+            border-radius: 12px; 
+            object-fit: cover; 
+            border: 3px solid var(--primary); 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        /* ----------------------------------------------- */
     </style>
 </head>
 <body>
@@ -69,7 +97,7 @@
     </div>
 
     <div id="screenCapture" style="display:none;" class="card">
-        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px;"></h3>
+        <h3 id="welcomeUser" style="text-align:center; color:var(--primary); margin-bottom:15px; font-size:1.1rem;"></h3>
         <div class="video-box">
             <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
             <canvas id="canvas" style="display:none;"></canvas>
@@ -82,11 +110,13 @@
         </div>
     </div>
 
-    <div id="screenAdmin" style="display:none;" class="card">
-        <h2 id="adminTitle" style="font-size:1rem; color:var(--primary); margin-bottom:15px;">Control</h2>
-        <button class="btn-main" style="background: #107c41; margin-bottom:10px;" onclick="exportToExcel()"><i class="ti ti-file-spreadsheet"></i> EXPORTAR EXCEL</button>
+    <div id="screenAdmin" style="display:none; background:transparent; margin:0; padding:0 15px;" class="admin-panel">
+        <div class="card" style="margin:15px 0; padding: 20px;">
+            <h2 id="adminTitle" style="font-size:1.1rem; color:var(--primary); margin-bottom:15px;">Control de Asistencia</h2>
+            <button class="btn-main" style="background: #107c41;" onclick="exportToExcel()"><i class="ti ti-file-spreadsheet"></i> DESCARGAR EXCEL DE DATOS</button>
+        </div>
         <div id="logsContainer"></div>
-        <button class="btn-main" style="background:#eee; color:#666; margin-top:20px;" onclick="location.reload()">CERRAR SESIÓN</button>
+        <button class="btn-main" style="background:#fff; color:#666; margin: 20px 0; border: 2px solid #ddd;" onclick="location.reload()">CERRAR SESIÓN DE JEFE</button>
     </div>
 </div>
 
@@ -133,7 +163,7 @@
             document.getElementById('screenLogin').style.display = 'none';
             if(user.rol === "JEFE") {
                 document.getElementById('screenAdmin').style.display = 'block';
-                document.getElementById('adminTitle').innerText = `Reporte: ${user.area}`;
+                document.getElementById('adminTitle').innerText = `Reporte de ${user.area}`;
                 cargarReportes(user.area);
             } else {
                 document.getElementById('screenCapture').style.display = 'block';
@@ -141,14 +171,14 @@
                 window.currentUser = user;
                 startCam();
             }
-        } else { alert("Clave incorrecta o usuario no seleccionado"); }
+        } else { alert("Datos incorrectos. Intente de nuevo."); }
     };
 
     function startCam() {
         navigator.mediaDevices.getUserMedia({ video: true }).then(s => document.getElementById('webcam').srcObject = s);
     }
 
-    // FUNCIÓN MEJORADA: Captura con Estampado de Seguridad
+    // Captura con Estampado de Seguridad y Calidad Media (para n itidez y espacio)
     window.doPhoto = () => {
         const v = document.getElementById('webcam');
         const c = document.getElementById('canvas');
@@ -167,9 +197,10 @@
 
         // Texto Estampado (Dorado Misión Paz)
         ctx.fillStyle = "#D4AF37";
-        ctx.font = "bold 22px Arial";
-        ctx.fillText(marca, 20, 465);
+        ctx.font = "bold 24px Arial"; // Texto un poco más grande para mejor lectura
+        ctx.fillText(marca, 25, 465);
         
+        // Calidad 0.8 (buena nitidez, peso controlado)
         window.currentPhoto = c.toDataURL('image/jpeg', 0.8);
         document.getElementById('preview').src = window.currentPhoto;
         document.getElementById('preview').style.display = 'block';
@@ -177,7 +208,7 @@
     };
 
     window.saveRecord = async (tipo) => {
-        if(!window.currentPhoto) return alert("Captura la foto");
+        if(!window.currentPhoto) return alert("Por favor, capture su foto de asistencia.");
         navigator.geolocation.getCurrentPosition(async (pos) => {
             await addDoc(collection(db, "asistencias"), {
                 usuario: window.currentUser.nombre,
@@ -187,11 +218,12 @@
                 foto: window.currentPhoto,
                 gps: `${pos.coords.latitude},${pos.coords.longitude}`
             });
-            alert("¡Registro guardado!");
+            alert("¡Registro guardado con éxito! Que tenga un bendecido día.");
             location.reload();
-        });
+        }, () => alert("Por favor activa el GPS"));
     };
 
+    // --- FUNCIÓN MODIFICADA PARA MOSTRAR FOTOS GRANDES ---
     function cargarReportes(area) {
         const q = query(collection(db, "asistencias"), where("area", "==", area));
         onSnapshot(q, (snap) => {
@@ -201,26 +233,39 @@
             snap.forEach(doc => {
                 const d = doc.data();
                 logsActuales.push(d);
+                
+                // Diseño de tarjeta optimizado para foto grande
                 container.innerHTML += `
                     <div class="log-card">
-                        <img src="${d.foto}" class="log-avatar">
-                        <div style="flex:1; margin-left:10px; font-size:12px;">
-                            <b>${d.usuario}</b><br>
-                            ${new Date(d.fecha).toLocaleString()}<br>
-                            <span style="color:${d.tipo=='Entrada'?'green':'red'}">${d.tipo}</span>
+                        <div class="log-header">
+                            <div style="font-size:12px; color:#555;">
+                                <strong style="font-size:15px; color:var(--primary);">${d.usuario}</strong><br>
+                                ${new Date(d.fecha).toLocaleString()}<br>
+                                Área: ${d.area}
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="background:${d.tipo=='Entrada'?'#2f855a':'#c53030'}; color:white; padding:5px 10px; border-radius:15px; font-weight:bold; font-size:11px;">
+                                    ${d.tipo.toUpperCase()}
+                                </span>
+                                <a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="color:var(--primary); background:#eee; padding:8px; border-radius:50%;">
+                                    <i class="ti ti-map-pin" style="font-size:22px;"></i>
+                                
+                                </a>
+                            </div>
                         </div>
-                        <a href="https://www.google.com/maps?q=${d.gps}" target="_blank" style="color:var(--primary);"><i class="ti ti-map-pin" style="font-size:22px;"></i></a>
+                        
+                        <img src="${d.foto}" class="log-avatar">
                     </div>`;
             });
         });
     }
 
     window.exportToExcel = () => {
-        if(logsActuales.length === 0) return alert("No hay datos");
-        const ws = XLSX.utils.json_to_sheet(logsActuales.map(l => ({Nombre: l.usuario, Area: l.area, Tipo: l.tipo, Fecha: new Date(l.fecha).toLocaleString(), Ubicacion: l.gps})));
+        if(logsActuales.length === 0) return alert("No hay datos para exportar.");
+        const ws = XLSX.utils.json_to_sheet(logsActuales.map(l => ({Nombre: l.usuario, Area: l.area, Tipo: l.tipo, Fecha: new Date(l.fecha).toLocaleString(), GPS: l.gps})));
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
-        XLSX.writeFile(wb, "Reporte_MisionPaz.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Asistencias");
+        XLSX.writeFile(wb, "Reporte_Asistencia_MisionPaz.xlsx");
     };
 </script>
 </body>
